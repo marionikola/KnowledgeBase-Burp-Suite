@@ -1,0 +1,230 @@
+# GitHub Actions CI/CD Pipeline for Burp Suite KnowledgeBase Platform
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+
+jobs:
+  # ============================================
+  # LINT AND FORMAT
+  # ============================================
+  lint:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install Dependencies
+        run: |
+          pip install flake8 black isort mypy
+      
+      - name: Run Flake8
+        run: |
+          flake8 src/ --max-line-length=120 --ignore=E501,W503
+      
+      - name: Run Black
+        run: |
+          black --check src/
+      
+      - name: Run isort
+        run: |
+          isort --check-only src/
+      
+      - name: Run MyPy
+        run: |
+          mypy src/
+
+  # ============================================
+  # TEST
+  # ============================================
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('platform/src/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install Dependencies
+        run: |
+          pip install -r platform/src/requirements.txt
+          pip install pytest pytest-cov pytest-asyncio
+      
+      - name: Run Tests
+        run: |
+          pytest platform/tests/ -v --cov=platform/src --cov-report=xml --cov-report=html
+      
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+
+  # ============================================
+  # SECURITY SCAN
+  # ============================================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install Dependencies
+        run: |
+          pip install safety bandit
+      
+      - name: Run Safety
+        run: |
+          safety check -r platform/src/requirements.txt || true
+      
+      - name: Run Bandit
+        run: |
+          bandit -r platform/src/ -f json -o bandit-report.json || true
+      
+      - name: Upload Bandit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+  # ============================================
+  # BUILD DOCKER
+  # ============================================
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [lint, test, security]
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build API Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: platform/docker/Dockerfile.api
+          push: false
+          tags: burpkb-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build AI Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./platform/src/ai
+          push: false
+          tags: burpkb-ai:latest
+
+  # ============================================
+  # DEPLOY TO STAGING
+  # ============================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your deployment commands here
+          # e.g., kubectl apply -f k8s/staging/
+      
+      - name: Notify Deployment
+        run: |
+          echo "Deployment to staging completed"
+
+  # ============================================
+  # DEPLOY TO PRODUCTION
+  # ============================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main'
+    
+    environment: production
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+      
+      - name: Notify Deployment
+        run: |
+          echo "Deployment to production completed"
+
+  # ============================================
+  # NOTIFY
+  # ============================================
+  notify:
+    name: Notify Status
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+      - name: Check Job Status
+        run: |
+          if [ "${{ needs.deploy-staging.result }}" == "failure" ]; then
+            echo "Staging deployment failed"
+            exit 1
+          fi
+          if [ "${{ needs.deploy-production.result }}" == "failure" ]; then
+            echo "Production deployment failed"
+            exit 1
+          fi

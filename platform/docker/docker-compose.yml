@@ -1,0 +1,177 @@
+# Docker Compose for Burp Suite KnowledgeBase Platform
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+version: '3.8'
+
+services:
+  # ============================================
+  # API Backend
+  # ============================================
+  api:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.api
+    container_name: burpkb-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/burpkb
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-secret-key-change-in-production
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./src:/app
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # Frontend
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: burpkb-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    depends_on:
+      - api
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  db:
+    image: postgres:15-alpine
+    container_name: burpkb-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=burpkb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # Redis Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: burpkb-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # AI Service
+  # ============================================
+  ai-service:
+    build:
+      context: ./src/ai
+      dockerfile: Dockerfile
+    container_name: burpkb-ai
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # Nginx Reverse Proxy
+  # ============================================
+  nginx:
+    image: nginx:alpine
+    container_name: burpkb-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # Monitoring
+  # ============================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: burpkb-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: burpkb-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+  # ============================================
+  # Elasticsearch for Search
+  # ============================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: burpkb-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - burpkb-network
+    restart: unless-stopped
+
+networks:
+  burpkb-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  grafana-data:
+  elasticsearch-data:
+
+# ============================================
+# Environment Variables
+# ============================================
+# Create a .env file with:
+# OPENAI_API_KEY=your-api-key-here

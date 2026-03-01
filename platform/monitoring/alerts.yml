@@ -1,0 +1,133 @@
+# Prometheus Alert Rules for Burp Suite KnowledgeBase Platform
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+groups:
+  - name: burpkb_platform_alerts
+    interval: 30s
+    rules:
+      # ============================================
+      # High Severity Alerts
+      # ============================================
+      
+      - alert: APIDown
+        expr: up{job="burpkb-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API is down"
+          description: "The BurpKB API has been down for more than 1 minute"
+      
+      - alert: AIServiceDown
+        expr: up{job="burpkb-ai"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AI Service is down"
+          description: "The AI Service has been down for more than 1 minute"
+      
+      - alert: DatabaseDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database is down"
+          description: "PostgreSQL has been down for more than 1 minute"
+
+      # ============================================
+      # Warning Alerts
+      # ============================================
+      
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="burpkb-api"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency"
+          description: "95th percentile API latency is above 2 seconds"
+      
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate"
+          description: "Error rate is above 5%"
+      
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is above 80% for more than 10 minutes"
+      
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Available memory is below 20%"
+      
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 15%"
+      
+      # ============================================
+      # Information Alerts
+      # ============================================
+      
+      - alert: HighPayloadGenerationTime
+        expr: histogram_quantile(0.95, rate(payload_generation_seconds_bucket[5m])) > 10
+        for: 10m
+        labels:
+          severity: info
+        annotations:
+          summary: "High payload generation time"
+          description: "Payload generation is taking longer than expected"
+      
+      - alert: LeaderboardStale
+        expr: time() - leaderboard_last_updated > 3600
+        for: 15m
+        labels:
+          severity: info
+        annotations:
+          summary: "Leaderboard is stale"
+          description: "Leaderboard hasn't been updated in over 1 hour"
+
+  # ============================================
+  # Security Alerts
+  # ============================================
+  
+  - name: security_alerts
+    interval: 1m
+    rules:
+      - alert: MultipleFailedLogins
+        expr: rate(auth_failed_login_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple failed login attempts detected"
+          description: "More than 10 failed login attempts per second detected"
+      
+      - alert: UnusualPayloadPatterns
+        expr: rate(suspicious_payload_pattern_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: info
+        annotations:
+          summary: "Unusual payload patterns detected"
+          description: "Suspicious payload patterns detected in requests"

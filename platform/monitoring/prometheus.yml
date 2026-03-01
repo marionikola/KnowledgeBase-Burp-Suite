@@ -1,0 +1,78 @@
+# Prometheus Configuration for Burp Suite KnowledgeBase Platform
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'burpkb-platform'
+    environment: 'production'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+rule_files:
+  - 'alerts.yml'
+
+scrape_configs:
+  # ============================================
+  # Prometheus Self-Monitoring
+  # ============================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ============================================
+  # API Metrics
+  # ============================================
+  - job_name: 'burpkb-api'
+    static_configs:
+      - targets: ['api:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # ============================================
+  # AI Service Metrics
+  # ============================================
+  - job_name: 'burpkb-ai'
+    static_configs:
+      - targets: ['ai-service:8001']
+    metrics_path: '/metrics'
+
+  # ============================================
+  # Nginx Metrics
+  # ============================================
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:9113']
+    scrape_interval: 30s
+
+  # ============================================
+  # PostgreSQL Metrics
+  # ============================================
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['db:9187']
+
+  # ============================================
+  # Redis Metrics
+  # ============================================
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:9121']
+
+  # ============================================
+  # Node Exporter
+  # ============================================
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+# ============================================
+# Alert Rules
+# ============================================
+rule_files:
+  - alerts.yml

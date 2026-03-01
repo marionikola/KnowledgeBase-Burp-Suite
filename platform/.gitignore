@@ -1,0 +1,110 @@
+# Burp Suite KnowledgeBase Platform - Git Ignore
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+*.log
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============================================
+# Node
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# Environment
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production
+*.env
+
+# ============================================
+# Docker
+# ============================================
+.dockerignore
+
+# ============================================
+# OS
+# ============================================
+.DS_Store
+Thumbs.db
+
+# ============================================
+# Secrets
+# ============================================
+*.pem
+*.key
+*.crt
+ssl/
+credentials/
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+
+# ============================================
+# Database
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Prometheus
+# ============================================
+prometheus-data/

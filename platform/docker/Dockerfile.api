@@ -1,0 +1,47 @@
+# Dockerfile for Burp Suite KnowledgeBase API
+# Version: 1.0.0-20260301-Senin-2002-WIB
+
+FROM python:3.11-slim
+
+# Labels
+LABEL maintainer="waktuberhenti"
+LABEL version="1.0.0"
+LABEL description="Burp Suite KnowledgeBase API"
+
+# Environment Variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Working Directory
+WORKDIR /app
+
+# Install System Dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python Dependencies
+COPY platform/src/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Copy Application Code
+COPY platform/src /app
+
+# Create Non-Root User
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Expose Port
+EXPOSE 8000
+
+# Health Check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Run Application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
