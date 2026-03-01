@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Burp%20Suite-Documentation-blue?style=for-the-badge&logo=security" alt="Burp Suite Documentation">
-  <img src="https://img.shields.io/badge/Version-1.0.0-green?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.17-green?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/Last%20Updated-2026--03--01-orange?style=flat-square" alt="Last Updated">
 </p>
@@ -66,32 +66,32 @@ Repository ini dibuat dengan tujuan untuk:
 - [x] Quick start guide untuk pemula
 
 ### 2. Tool Reference
-- [ ] **Proxy**: Configure and use Burp Proxy
-- [ ] **Spider**: Web spidering capabilities
-- [ ] **Scanner**: Automated vulnerability scanning
-- [ ] **Repeater**: Manual request manipulation
-- [ ] **Intruder**: Automated payload testing
-- [ ] **Sequencer**: Token randomness analysis
-- [ ] **Decoder**: Encode/decode utilities
-- [ ] **Comparer**: Response comparison
+- [x] **Proxy**: Configure and use Burp Proxy
+- [x] **Spider**: Web spidering capabilities
+- [x] **Scanner**: Automated vulnerability scanning
+- [x] **Repeater**: Manual request manipulation
+- [x] **Intruder**: Automated payload testing
+- [x] **Sequencer**: Token randomness analysis
+- [x] **Decoder**: Encode/decode utilities
+- [x] **Comparer**: Response comparison
 
 ### 3. Tips & Tricks
-- [ ] Keyboard shortcuts
-- [ ] Efficient workflow strategies
-- [ ] Common issues and solutions
+- [x] Keyboard shortcuts
+- [x] Efficient workflow strategies
+- [x] Common issues and solutions
 
 ### 4. Advanced Topics
-- [ ] Extension development with Python/Java
-- [ ] Custom payload creation
-- [ ] Automation with Burp Suite API
-- [ ] Integration with CI/CD pipeline
+- [x] Extension development with Python/Java
+- [x] Custom payload creation
+- [x] Automation with Burp Suite API
+- [x] Integration with CI/CD pipeline
 
 ### 5. Real-world Examples
-- [ ] SQL Injection testing
-- [ ] Cross-Site Scripting (XSS)
-- [ ] Authentication bypass techniques
-- [ ] Authorization testing
-- [ ] Business logic testing
+- [x] SQL Injection testing
+- [x] Cross-Site Scripting (XSS)
+- [x] Authentication bypass techniques
+- [x] Authorization testing
+- [x] Business logic testing
 
 ---
 
@@ -351,7 +351,7 @@ Lihat [CHANGELOG.md](CHANGELOG.md) untuk melihat semua versi dan perubahan.
 
 ---
 
-**Version**: 1.0.0-20260301-Minggu-0939-WIB  
-**Last Updated**: 2026-03-01 - Minggu - 09:39 GMT+7 (WIB)  
+**Version**: 1.0.17-20260301-Minggu-1738-WIB  
+**Last Updated**: 2026-03-01 - Minggu - 17:38 GMT+7 (WIB)  
 **License**: MIT  
 **Status**: Active
