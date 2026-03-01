@@ -1,6 +1,6 @@
 # Burp Suite Payload Collection
 
-> Koleksi payload komprehensif untuk security testing menggunakan Burp Suite
+> Koleksi payload komprehensif untuk security testing menggunakan Burp Suite - 2,540+ files
 
 ## Overview
 
@@ -11,33 +11,54 @@ Direktori ini berisi kumpulan payload yang digunakan untuk menguji berbagai jeni
 ```
 examples/payloads/
 ├── api/                    # API Testing Payloads
-│   ├── graphql-*.txt      # GraphQL testing payloads
-│   ├── jwt-*.txt          # JWT testing payloads
-│   ├── oauth-*.txt        # OAuth testing payloads
-│   └── rest-*.txt         # REST API testing payloads
 ├── authentication/         # Authentication Testing
-│   ├── auth-*.txt         # General auth bypass
-│   ├── jwt-*.txt          # JWT vulnerabilities
-│   └── oauth-*.txt        # OAuth vulnerabilities
-├── files/                  # File-Related Testing
-│   └── lfi-*.txt          # Local File Inclusion
-├── injection/              # Injection Payloads
-│   ├── sqli-*.txt         # SQL Injection
-│   ├── nosql-*.txt        # NoSQL Injection
-│   ├── ldap-*.txt         # LDAP Injection
-│   ├── xpath-*.txt        # XPath Injection
-│   └── rfi-*.txt          # Remote File Inclusion
-├── miscellaneous/           # Other Payloads
-│   ├── csrf-*.txt         # CSRF testing
-│   ├── deserialization-*.txt  # Deserialization
-│   ├── ssti-*.txt         # Server Side Template Injection
-│   └── race-condition-*.txt   # Race Condition
-├── network/                 # Network-Based Testing
-│   ├── ssrf-*.txt         # Server Side Request Forgery
-│   └── http-*.txt         # HTTP smuggling/splitting
-└── xss/                     # Cross-Site Scripting
-    ├── xss-*.txt          # XSS payloads
-    └── dom-*.txt          # DOM-based XSS
+├── cloud/                 # Cloud Security Testing
+├── cms/                   # CMS Vulnerabilities
+├── cookies/               # Cookie Fuzzing
+├── encoding/              # Encoding Bypass
+├── files/                 # File-Related Testing
+├── fuzzing/               # General Fuzzing
+├── graphql/               # GraphQL Testing
+├── headers/               # HTTP Header Injection
+├── idor/                  # Insecure Direct Object Reference
+├── injection/             # Injection Payloads
+├── javascript/            # JavaScript Injection
+├── javascript/            # JavaScript/Node.js Testing
+├── jwt/                   # JWT Vulnerabilities
+├── ldap/                  # LDAP Injection
+├── linux/                 # Linux Exploitation
+├── log4j/                 # Log4j Vulnerabilities
+├── memcached/             # Memcached Injection
+├── mobile/                # Mobile API Testing
+├── mongodb/               # MongoDB Injection
+├── mysql/                 # MySQL Injection
+├── network/               # Network Attacks
+├── oracle/                # Oracle Injection
+├── oauth/                 # OAuth Vulnerabilities
+├── parameters/            # Parameter Fuzzing
+├── path/                  # Path Traversal
+├── postgresql/            # PostgreSQL Injection
+├── privilege-escalation/  # Privilege Escalation
+├── rails/                 # Ruby on Rails
+├── rce/                   # Remote Code Execution
+├── react/                 # React.js Testing
+├── redis/                 # Redis Injection
+├── rest/                  # REST API Testing
+├── saml/                  # SAML Injection
+├── serialization/         # Deserialization
+├── soap/                  # SOAP API Testing
+├── spring/                # Spring Framework
+├── ssti/                  # Server-Side Template Injection
+├── sql-injection/         # SQL Injection
+├── struts/                # Apache Struts
+├── svn/                   # SVN Information Disclosure
+├── upload/                # File Upload Bypass
+├── vue/                   # Vue.js Testing
+├── websockets/            # WebSocket Testing
+├── windows/               # Windows Exploitation
+├── xss/                   # Cross-Site Scripting
+├── xxe/                   # XML External Entity
+└── django/                # Django Testing
 ```
 
 ## Kategori Payload
@@ -87,7 +108,7 @@ Pengujian autentikasi dan authorization:
 | `lfi-wrapper.txt` | Protocol wrapper bypass |
 | `lfi-*.txt` | Platform-specific LFI |
 
-### 5. API Testing (`api/`)
+### 5. API Testing (`api/`, `rest/`, `graphql/`)
 
 | File | Deskripsi |
 |------|-----------|
@@ -96,23 +117,57 @@ Pengujian autentikasi dan authorization:
 | `jwt-*.txt` | JWT API testing |
 | `oauth-*.txt` | OAuth/API security |
 
-### 6. Network Attacks (`network/`)
+### 6. Cloud Security (`cloud/`)
 
 | File | Deskripsi |
 |------|-----------|
-| `ssrf-*.txt` | Server-Side Request Forgery |
-| `http-*.txt` | HTTP Request Smuggling |
-| `websocket-*.txt` | WebSocket injection |
+| `cloud-aws-*.txt` | AWS metadata endpoint testing |
+| `cloud-azure-*.txt` | Azure metadata testing |
+| `cloud-gcp-*.txt` | GCP metadata testing |
 
-### 7. Miscellaneous (`miscellaneous/`)
+### 7. Framework-Specific
 
-| File | Deskripsi |
-|------|-----------|
-| `ssti-*.txt` | Server-Side Template Injection |
-| `deserialization-*.txt` | Deserialization attacks |
-| `csrf-*.txt` | CSRF testing |
-| `race-condition-*.txt` | Race condition testing |
-| `bypass-*.txt` | WAF/Filter bypass |
+| Direktori | Framework |
+|-----------|-----------|
+| `log4j/` | Log4j vulnerabilities |
+| `struts/` | Apache Struts |
+| `spring/` | Spring Framework |
+| `rails/` | Ruby on Rails |
+| `django/` | Django |
+| `laravel/` | Laravel |
+| `express/` | Express.js |
+| `angular/` | Angular |
+| `react/` | React.js |
+| `vue/` | Vue.js |
+
+### 8. Database Injection
+
+| Direktori | Database |
+|-----------|----------|
+| `mysql/` | MySQL |
+| `postgresql/` | PostgreSQL |
+| `oracle/` | Oracle |
+| `mongodb/` | MongoDB |
+| `redis/` | Redis |
+| `memcached/` | Memcached |
+
+### 9. CI/CD & DevOps
+
+| Direktori | Tools |
+|-----------|-------|
+| `jenkins/` | Jenkins |
+| `docker/` | Docker |
+| `kubernetes/` | Kubernetes |
+| `git/` | Git |
+| `svn/` | SVN |
+| `ci-cd/` | CI/CD Pipelines |
+
+### 10. Platform-Specific
+
+| Direktori | Platform |
+|-----------|----------|
+| `windows/` | Windows |
+| `linux/` | Linux |
 
 ## Cara Penggunaan
 
@@ -152,6 +207,12 @@ Pengujian autentikasi dan authorization:
 - **Encoding**: Gunakan Burp Decoder untuk encoding yang berbeda
 - **Grep**: Gunakan Intruder Grep untuk menemukan pola response tertentu
 
+## Statistics
+
+- **Total Files**: 2,540+
+- **Categories**: 40+
+- **Version**: 1.0.15-20260301-Minggu-1621-WIB
+
 ## Disclaimer
 
 ⚠️ **PERINGATAN**: Payload ini hanya untuk penggunaan dalam **authorized security testing**. 
@@ -159,13 +220,14 @@ Pengujian autentikasi dan authorization:
 - Gunakan hanya pada sistem yang memiliki izin tertulis
 - Ikuti Rules of Engagement yang disepakati
 - Jangan gunakan untuk aktivitas ilegal
--擅自从 Provider这边获取的 Payload
+- 所有Payload仅供安全研究使用
 
 ## Referensi
 
 - [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
 - [PortSwigger Web Security Academy](https://portswigger.net/web-security)
 - [PayloadAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)
+- [Burp Suite Official Documentation](https://portswigger.net/burp/documentation)
 
 ## Kontribusi
 
@@ -180,8 +242,8 @@ MIT License - lihat file [LICENSE](../../LICENSE) untuk detail.
 
 ## Versi
 
-- **Versi Saat Ini**: 1.0.12-20260301-Minggu-1608-WIB
-- **Total Payload**: 223+ files
+- **Versi Saat Ini**: 1.0.15-20260301-Minggu-1621-WIB
+- **Total Payload**: 2,540+ files
 - **Terakhir Diperbarui**: 2026-03-01
 
 ---
