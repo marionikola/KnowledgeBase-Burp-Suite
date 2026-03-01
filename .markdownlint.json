@@ -1,0 +1,96 @@
+{
+  "MD001": true,
+  "MD002": false,
+  "MD003": {
+    "style": "atx"
+  },
+  "MD004": {
+    "style": "asterisk"
+  },
+  "MD005": true,
+  "MD006": true,
+  "MD007": {
+    "indent": 4
+  },
+  "MD009": {
+    "br_spaces": 2,
+    "strict": false
+  },
+  "MD010": {
+    "code_blocks": true,
+    "ignore_code_blocks": true
+  },
+  "MD011": true,
+  "MD012": {
+    "max": 1
+  },
+  "MD013": {
+    "line_length": 200,
+    "code_blocks": false,
+    "headings": false
+  },
+  "MD014": false,
+  "MD018": true,
+  "MD019": true,
+  "MD020": true,
+  "MD021": true,
+  "MD022": true,
+  "MD023": true,
+  "MD024": false,
+  "MD025": false,
+  "MD026": {
+    "punctuation": ".,;:!"
+  },
+  "MD027": true,
+  "MD028": false,
+  "MD029": {
+    "style": "ordered"
+  },
+  "MD030": {
+    "ul_multi": 3,
+    "ol_multi": 2
+  },
+  "MD031": {
+    "list_items": true
+  },
+  "MD032": true,
+  "MD033": false,
+  "MD034": true,
+  "MD035": {
+    "style": "---"
+  },
+  "MD036": false,
+  "MD037": true,
+  "MD038": true,
+  "MD039": true,
+  "MD040": {
+    "language_markers": []
+  },
+  "MD041": false,
+  "MD042": true,
+  "MD043": false,
+  "MD044": {
+    "names": ["Burp Suite", "Burp", "PortSwigger"]
+  },
+  "MD045": true,
+  "MD046": {
+    "style": " fenced"
+  },
+  "MD047": true,
+  "MD048": {
+    "style": "asterisk"
+  },
+  "MD049": {
+    "style": "asterisk"
+  },
+  "MD050": {
+    "style": "asterisk"
+  },
+  "MD051": false,
+  "MD052": false,
+  "MD053": {
+    "ignored_files": [
+      "CHANGELOG.md"
+    ]
+  }
+}

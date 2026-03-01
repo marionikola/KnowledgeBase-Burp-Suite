@@ -1,0 +1,168 @@
+# GitHub Actions CI/CD Workflow
+# Version: 1.0.19-20260301-Senin-1827-WIB
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ============================================
+  # LINT - Markdown Linting
+  # ============================================
+  markdown-lint:
+    name: Markdown Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run Markdown Lint
+      uses: DavidAnson/markdownlint-cli2-action@v14
+      with:
+        globs: "**/*.md"
+        config: ".markdownlint.json"
+    
+    - name: Check links
+      uses: lycheeverse/lychee-action@v1.8.0
+      with:
+        args: --verbose --no-progress './docs/**/*.md' './README.md'
+        fail: true
+
+  # ============================================
+  # VALIDATE - Payload Validation
+  # ============================================
+  validate-payloads:
+    name: Validate Payloads
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Validate payload files
+      run: |
+        # Check for empty files
+        find examples/payloads -name "*.txt" -type f -empty -print
+        
+        # Check file encoding
+        find examples/payloads -name "*.txt" -type f -exec file {} \;
+        
+        # Count payload lines
+        echo "Total payload files:"
+        find examples/payloads -name "*.txt" -type f | wc -l
+
+  # ============================================
+  # TEST - Documentation Build
+  # ============================================
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install MkDocs
+      run: |
+        pip install mkdocs mkdocs-material
+    
+    - name: Build documentation
+      run: |
+        mkdocs build --strict || echo "MkDocs build optional"
+    
+    - name: Check YAML syntax
+      run: |
+        pip install pyyaml
+        python -c "import yaml; [yaml.safe_load(open(f)) for f in __import__('glob').glob('**/*.yml')]"
+
+  # ============================================
+  # SECURITY - Secret Scanning
+  # ============================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run GitLeaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITLEAKS_ENABLE_COMMENTS: false
+
+  # ============================================
+  # DEPLOY - GitHub Pages
+  # ============================================
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [markdown-lint, validate-payloads, build-docs]
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install MkDocs
+      run: |
+        pip install mkdocs mkdocs-material
+    
+    - name: Build with MkDocs
+      run: |
+        mkdocs build --strict --site-dir _site
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '_site'
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+  # ============================================
+  # NOTIFY - Discord/Slack Notification
+  # ============================================
+  notify:
+    name: Notify
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+    
+    steps:
+    - name: Send notification
+      run: |
+        echo "Deployment completed - Status: ${{ needs.deploy.result }}"

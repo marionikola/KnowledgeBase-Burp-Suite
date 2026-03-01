@@ -1,0 +1,169 @@
+# MkDocs Configuration for Burp Suite Documentation
+# Version: 1.0.19-20260301-Senin-1827-WIB
+
+# ============================================
+# Project Information
+# ============================================
+site_name: Burp Suite KnowledgeBase
+site_description: Comprehensive documentation, tutorials, tips and tricks for Burp Suite
+site_author: waktuberhenti
+site_url: https://marionikola.github.io/KnowledgeBase-Burp-Suite/
+
+# ============================================
+# Repository Configuration
+# ============================================
+repo_name: marionikola/KnowledgeBase-Burp-Suite
+repo_url: https://github.com/marionikola/KnowledgeBase-Burp-Suite
+edit_uri: edit/main/docs/
+
+# ============================================
+# Theme Configuration
+# ============================================
+theme:
+  name: material
+  palette:
+    primary: deep orange
+    accent: orange
+    scheme: preference
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+  icon:
+    repo: fontawesome/brands/github
+
+# ============================================
+# Navigation Structure
+# ============================================
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started/installation.md
+    - getting-started/quick-start.md
+  - Tutorials:
+    - tutorials/proxy-configuration.md
+    - tutorials/spider-usage.md
+    - tutorials/scanner-usage.md
+    - tutorials/repeater-usage.md
+    - tutorials/intruder-usage.md
+  - Tips & Tricks:
+    - tips-and-tricks/keyboard-shortcuts.md
+    - tips-and-tricks/efficient-workflow.md
+    - tips-and-tricks/common-issues.md
+  - Vulnerability Testing:
+    - vulnerability-testing/xss-testing.md
+    - vulnerability-testing/sqli-testing.md
+    - vulnerability-testing/csrf-testing.md
+    - vulnerability-testing/idor-testing.md
+    - vulnerability-testing/auth-testing.md
+  - API Testing:
+    - api-testing/api-testing.md
+    - api-testing/graphql-testing.md
+    - api-testing/jwt-testing.md
+    - api-testing/websocket-testing.md
+  - Advanced Topics:
+    - advanced-topics/extension-development.md
+    - advanced-topics/custom-payloads.md
+    - advanced-topics/automation.md
+    - advanced-topics/burp-api-usage.md
+    - advanced-topics/session-handling.md
+    - advanced-topics/performance-tuning.md
+  - Best Practices:
+    - best-practices/testing-methodology.md
+    - best-practices/checklist.md
+    - best-practices/reporting.md
+  - Tools Integration:
+    - tools-integration/tools-integration.md
+    - tools-integration/docker-setup.md
+
+# ============================================
+# Markdown Extensions
+# ============================================
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - md_in_html
+  - tables
+  - fenced_code
+  - codehilite:
+      guess_lang: false
+      css_class: highlight
+  - toc:
+      permalink: true
+  - pymdownx.caret:
+      insert_marker: " ^^"
+  - pymdownx.tilde:
+      insert_marker: " ~~"
+  - pymdownx.progressbar
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+# ============================================
+# Plugins
+# ============================================
+plugins:
+  - search:
+      separator: '[\s\-\.]+'
+      prebuild_index: true
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+  - git-revision-date-localized:
+      type: time_tag
+  - roamlinks:
+      slugify: true
+
+# ============================================
+# Page Tree
+# ============================================
+# Custom ordering for documentation pages
+
+# ============================================
+# Extra Configuration
+# ============================================
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/marionikola/KnowledgeBase-Burp-Suite
+    - icon: fontawesome/brands/python
+      link: https://portswigger.net/burp
+  version: 1.0.19
+  legal:
+    - Privacy: privacy.md
+    - Terms: terms.md
+
+# ============================================
+# Validation
+# ============================================
+strict: true
+
+# ============================================
+# Output Configuration
+# ============================================
+use_directory_urls: true
+remote_theme: material/mkdocs-material
+
+# ============================================
+# Dev Server Configuration
+# ============================================
+# livereload: true
+# watch:
+#   - docs/
+#   - examples/
