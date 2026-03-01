@@ -1,2 +1,4 @@
--e # windows Payload 22
+-e # Windows Exploitation Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+C:\Windows\System32

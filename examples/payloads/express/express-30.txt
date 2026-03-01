@@ -1,2 +1,7 @@
--e # express Payload 30
+-e # Express.js Security Testing Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+../../../../../etc/passwd
+..%2f..%2f..%2f..%2fetc%2fpasswd
+{{7*7}}
+{{constructor.name}}

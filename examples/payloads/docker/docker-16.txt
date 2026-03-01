@@ -1,2 +1,8 @@
--e # docker Payload 16
+-e # Docker Security Testing Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+/.dockerenv
+/proc/1/cgroup
+/etc/hosts
+/var/run/docker.sock
+http://host.docker.internal

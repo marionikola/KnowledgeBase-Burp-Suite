@@ -1,2 +1,8 @@
--e # memcached Payload 43
+-e # Memcached Injection Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+set test 0 0 10
+testvalue
+get test
+stats
+flush_all

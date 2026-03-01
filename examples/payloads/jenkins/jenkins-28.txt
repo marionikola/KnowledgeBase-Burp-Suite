@@ -1,2 +1,7 @@
--e # jenkins Payload 28
+-e # Jenkins Security Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+/descriptorByName/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScripting/reload()
+/script/
+/administrativeMonitor/scriptSecurity/revoke()
+/manage

@@ -1,2 +1,11 @@
--e # linux Payload 3
+-e # Linux Exploitation Payloads
 # Version: 1.0.15-20260301-Minggu-1621-WIB
+
+/etc/passwd
+/etc/shadow
+/etc/hosts
+/proc/self/environ
+/proc/version
+/proc/cmdline
+/bin/sh
+/bin/bash
