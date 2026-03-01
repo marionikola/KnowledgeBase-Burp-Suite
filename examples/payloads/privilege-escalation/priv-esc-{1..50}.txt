@@ -1,0 +1,6 @@
+-e # Privilege Escalation Payload {1..50}
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+role=admin
+is_admin=1
+privilege=admin

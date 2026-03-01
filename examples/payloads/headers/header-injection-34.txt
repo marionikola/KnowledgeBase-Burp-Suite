@@ -1,0 +1,4 @@
+-e # Header Injection Payload 34
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+X-Forwarded-For: 127.0.0.1

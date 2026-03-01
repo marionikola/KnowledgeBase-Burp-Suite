@@ -1,0 +1,4 @@
+-e # Path Traversal Payload 48
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+..%2f..%2f

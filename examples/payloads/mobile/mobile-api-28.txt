@@ -1,0 +1,4 @@
+-e # Mobile API Payload 28
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+/api/mobile/v1

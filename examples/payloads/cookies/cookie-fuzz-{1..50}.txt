@@ -1,0 +1,5 @@
+-e # Cookie Fuzzing Payload {1..50}
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+session_id=test{1..50}
+user_token=test{1..50}

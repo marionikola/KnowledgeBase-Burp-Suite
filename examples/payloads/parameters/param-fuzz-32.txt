@@ -1,0 +1,4 @@
+-e # Parameter Fuzzing Payload 32
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+param32=value

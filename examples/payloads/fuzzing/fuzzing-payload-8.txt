@@ -1,0 +1,6 @@
+-e # Fuzzing Payload 8
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+test8
+payload8
+fuzz8

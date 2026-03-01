@@ -1,0 +1,4 @@
+-e # WebSocket Fuzzing Payload 4
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+{"message":"test4"}

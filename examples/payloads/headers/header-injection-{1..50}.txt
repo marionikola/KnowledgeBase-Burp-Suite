@@ -1,0 +1,5 @@
+-e # Header Injection Payload {1..50}
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+X-Forwarded-For: 127.0.0.1
+X-Real-IP: 127.0.0.1

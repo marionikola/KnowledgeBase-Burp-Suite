@@ -1,0 +1,6 @@
+-e # Fuzzing Payload 36
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+test36
+payload36
+fuzz36

@@ -1,0 +1,4 @@
+-e # Cookie Fuzzing Payload 29
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+session_id=test29

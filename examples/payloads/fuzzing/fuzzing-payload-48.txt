@@ -1,0 +1,6 @@
+-e # Fuzzing Payload 48
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+test48
+payload48
+fuzz48

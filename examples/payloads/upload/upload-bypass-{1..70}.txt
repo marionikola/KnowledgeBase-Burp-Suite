@@ -1,0 +1,6 @@
+-e # File Upload Bypass {1..70}
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+shell.php
+shell.php.jpg
+shell.php5

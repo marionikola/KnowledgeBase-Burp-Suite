@@ -1,0 +1,4 @@
+-e # XXE Payload 6
+# Version: 1.0.14-20260301-Minggu-1612-WIB
+
+<?xml version="1.0"?>
