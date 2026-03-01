@@ -1,0 +1,272 @@
+# CI/CD Integration with Burp Suite
+# Version: 1.0.18-20260301-Senin-1812-WIB
+
+# ============================================
+# GitHub Actions - Burp Suite Scan
+# ============================================
+
+name: Burp Suite Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  burp-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+    
+    - name: Download Burp Suite
+      run: |
+        wget -q -O burpsuite_pro.jar \
+        "${{ secrets.BURP_SUITE_JAR_URL }}"
+    
+    - name: Run Burp Suite Scan
+      run: |
+        java -jar burpsuite_pro.jar \
+        --project-file=scan.burp \
+        --config-file=burp-config.json \
+        --scan-all-outline-rooturls \
+        --exclude-from-sitemap=^https://example.com/admin \
+        -l INFO
+    
+    - name: Upload Scan Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: burp-report
+        path: |
+          *.html
+          *.xml
+          *.json
+    
+    - name: Upload Scan to S3
+      if: always()
+      run: |
+        aws s3 cp scan-report.html s3://bucket/reports/
+
+# ============================================
+# Jenkins Pipeline
+# ============================================
+
+pipeline {
+    agent any
+    
+    environment {
+        BURP_VERSION = '2023.1'
+        JENKINS_BURP_KEY = credentials('burp-api-key')
+    }
+    
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        
+        stage('Burp Suite Scan') {
+            steps {
+                script {
+                    def burpScan = [
+                        toolType: 'burp',
+                        toolInstallation: 'Burp Suite Professional',
+                        projectFile: "${WORKSPACE}/scan.burp",
+                        intrusionPoints: "${WORKSPACE}/target_urls.txt",
+                        scanType: 'light',
+                        reportFormat: 'HTML'
+                    ]
+                    
+                    // Run Burp scan
+                    burpScan(burpScan)
+                }
+            }
+        }
+        
+        stage('Security Gate') {
+            steps {
+                sh '''
+                    # Check for critical issues
+                    if grep -q "Critical" burp-report.html; then
+                        echo "Critical issues found!"
+                        exit 1
+                    fi
+                '''
+            }
+        }
+    }
+    
+    post {
+        always {
+            archiveArtifacts artifacts: 'burp-report.*', allowEmptyArchive: true
+        }
+    }
+}
+
+# ============================================
+# GitLab CI
+# ============================================
+
+stages:
+  - security
+  - build
+
+burp_scan:
+  stage: security
+  image: openjdk:11
+  variables:
+    BURP_VERSION: "2023.1"
+  script:
+    - wget -q -O burpsuite_pro.jar $BURP_URL
+    - java -jar burpsuite_pro.jar --config-file=burp.yml \
+      --project-file=scan.burp \
+      --passive-scan-only
+    - cat scan-report.html | grep -i "issue" > issues.txt
+  artifacts:
+    when: always
+    paths:
+      - scan-report.*
+    reports:
+      junit: scan-results.xml
+  allow_failure: true
+
+# ============================================
+# Azure DevOps
+# ============================================
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '11'
+    jdkSource: 'preInstalled'
+
+- task: DownloadSecureFile@1
+  name: burpJar
+  secureFile: 'burpsuite_pro.jar'
+
+- task: CmdLine@2
+  displayName: 'Run Burp Suite Scan'
+  inputs:
+    script: |
+      java -jar $(burpJar.secureFilePath) \
+        --project-file=scan.burp \
+        --config-file=burp-config.json
+
+- task: PublishSecurityResults@0
+  inputs:
+    findingsFiles: '**/burp-*.xml'
+    format: 'burp'
+
+# ============================================
+# Docker-based CI
+# ============================================
+
+# Dockerfile for CI
+FROM openjdk:11
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY burpsuite_pro.jar /app/
+COPY scan-config.yml /app/
+
+WORKDIR /app
+
+CMD ["java", "-jar", "burpsuite_pro.jar"]
+
+# ============================================
+# Bamboo CI
+# ============================================
+
+# Plan Configuration
+key: SECURITY
+name: Security Scan
+
+stages:
+  - name: Build
+    tasks:
+      - checkout
+      - maven
+        
+  - name: Burp Scan
+ - script:
+             tasks:
+      interpreter: SHELL
+          scripts:
+            - |
+              #!/bin/bash
+              java -jar burpsuite_pro.jar \
+                --project-file=scan.burp \
+                --config-file=scan-config.yml \
+                --baseline
+
+# ============================================
+# CircleCI
+# ============================================
+
+version: 2.1
+
+executors:
+  burp-executor:
+    docker:
+      - image: cimg/openjdk:11.0
+
+jobs:
+  security-scan:
+    executor: burp-executor
+    steps:
+      - checkout
+      - attach_workspace
+      - run:
+          name: Download Burp
+          command: |
+            wget -q -O burpsuite_pro.jar $BURP_URL
+      - run:
+          name: Run Scan
+          command: |
+            java -jar burpsuite_pro.jar \
+              --project-file=scan.burp \
+              --scan-all-outline-rooturls
+      - store_artifacts:
+          path: scan-report.html
+
+workflows:
+  security-workflow:
+    jobs:
+      - security-scan:
+          context:
+            - burp-credentials
+
+# ============================================
+# Bitbucket Pipelines
+# ============================================
+
+image: openjdk:11
+
+pipelines:
+  default:
+    - step:
+        name: 'Burp Suite Scan'
+        script:
+          - wget -q -O burpsuite_pro.jar $BURP_URL
+          - java -jar burpsuite_pro.jar \
+            --project-file=scan.burp \
+            --baseline
+        artifacts:
+          - scan-report.html
+
