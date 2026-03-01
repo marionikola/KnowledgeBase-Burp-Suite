@@ -1,0 +1,16 @@
+# OAuth Testing Payloads
+
+## Token Manipulation
+# Change token values
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+## Redirect URI Bypass
+http://localhost
+http://127.0.0.1
+http://attacker.com
+attacker.com
+
+## State Parameter
+# Remove state parameter
+# Use predictable state
+ CS# TestRF in OAuth flow
