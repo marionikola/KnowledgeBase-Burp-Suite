@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.19] - 2026-03-01 - Senin - 18:27 GMT+7 (WIB)
+
+### Added
+- GitHub Actions CI/CD workflow
+- MkDocs configuration for documentation site
+- Markdown linting configuration
+- Maintenance guide documentation
+- GitHub issue and PR templates
+
+### Completed Phases
+- Fase 5: Payload Enrichment
+- Fase 6: Automation & Integration
+- Fase 7: Advanced Feature Development
+- Fase 8: Community Contribution
+- Fase 9: Platform & Deployment
+- Fase 10: Maintenance & Updates
+
+---
+
+## [1.0.18] - 2026-03-01 - Senin - 18:12 GMT+7 (WIB)
+
+### Added
+- SMTP injection comprehensive payloads
+- LDAP injection comprehensive payloads
+- Deserialization payloads (Java/PHP/Python)
+- Race condition/TOCTOU payloads
+- Docker configuration for Burp Suite
+- CI/CD integration configs
+- Python extension examples
+- Enhanced CONTRIBUTING.md
+
+---
+
 ## [1.0.17] - 2026-03-01 - Minggu - 17:38 GMT+7 (WIB)
 
 ### Added
@@ -154,6 +187,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Version**: 1.0.17
-**Last Updated**: 2026-03-01 - Minggu - 17:38 GMT+7 (WIB)
+**Version**: 1.0.19
+**Last Updated**: 2026-03-01 - Senin - 18:27 GMT+7 (WIB)
 **Author**: waktuberhenti
