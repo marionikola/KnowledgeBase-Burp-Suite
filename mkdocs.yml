@@ -1,11 +1,11 @@
 # MkDocs Configuration for Burp Suite Documentation
-# Version: 1.0.19-20260301-Senin-1827-WIB
+# Version: 1.1.0-2026-03-01-Senin-2105-WIB
 
 # ============================================
 # Project Information
 # ============================================
 site_name: Burp Suite KnowledgeBase
-site_description: Comprehensive documentation, tutorials, tips and tricks for Burp Suite
+site_description: Comprehensive documentation, tutorials, tips and tricks for Burp Suite - Now with AI-Powered Security Features
 site_author: waktuberhenti
 site_url: https://marionikola.github.io/KnowledgeBase-Burp-Suite/
 
@@ -80,6 +80,22 @@ nav:
   - Tools Integration:
     - tools-integration/tools-integration.md
     - tools-integration/docker-setup.md
+  - AI Security (Phase 15):
+    - ai-scanner.md
+    - ai-pentest/automation.md
+  - API Platform (Phase 15):
+    - api/overview.md
+  - Integrations (Phase 15):
+    - integrations/hub.md
+  - Mobile App (Phase 15):
+    - mobile/app.md
+  - Cloud Security (Phase 16):
+    - cloud-security/scanner.md
+  - Enterprise (Phase 16-17):
+    - enterprise/governance.md
+    - enterprise/on-premise.md
+  - Certification (Phase 17):
+    - certification/program.md
 
 # ============================================
 # Markdown Extensions
@@ -144,7 +160,7 @@ extra:
       link: https://github.com/marionikola/KnowledgeBase-Burp-Suite
     - icon: fontawesome/brands/python
       link: https://portswigger.net/burp
-  version: 1.0.19
+  version: 1.1.0
   legal:
     - Privacy: privacy.md
     - Terms: terms.md

